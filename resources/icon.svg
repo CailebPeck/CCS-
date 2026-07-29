@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#161616"/>
+      <stop offset="1" stop-color="#0b0b0b"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f21d2a"/>
+      <stop offset="1" stop-color="#8f1518"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <!-- wave arc -->
+  <path d="M 96 700 Q 320 600 512 668 Q 704 736 928 636" fill="none" stroke="#2a3a4a" stroke-width="46" stroke-linecap="round" opacity="0.9"/>
+  <path d="M 96 790 Q 320 690 512 758 Q 704 826 928 726" fill="none" stroke="#1c2a33" stroke-width="46" stroke-linecap="round" opacity="0.8"/>
+  <!-- lightning bolt -->
+  <path d="M 588 148 L 348 542 L 492 542 L 424 852 L 700 424 L 546 424 Z" fill="url(#bolt)"/>
+  <!-- CCS wordmark -->
+  <text x="512" y="962" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="88" letter-spacing="30" fill="#f5f5f2">CCS</text>
+</svg>

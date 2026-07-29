@@ -1,0 +1,12 @@
+{
+  "appId": "au.com.coastlinecurrentsolutions.hub",
+  "appName": "Coastline Hub",
+  "webDir": "www",
+  "backgroundColor": "#0b0b0b",
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "never"
+  }
+}

@@ -98,15 +98,52 @@ cd android && ./gradlew bundleRelease
 # output: android/app/build/outputs/bundle/release/app-release.aab
 ```
 
-### iOS (App Store)
+### iOS (App Store) — cloud builds, no Mac needed
 
-1. On a Mac: `npm install && npx cap sync ios`
-2. `npx cap open ios` — opens the project in Xcode.
-3. In **Signing & Capabilities**, select your Apple Developer team; Xcode manages certificates/profiles automatically.
-4. Select **Any iOS Device**, then **Product → Archive**.
-5. In the Organizer window, **Distribute App → App Store Connect → Upload**.
-6. In [App Store Connect](https://appstoreconnect.apple.com): create the app (bundle ID `au.com.coastlinecurrentsolutions.hub`), fill in the listing (copy in `STORE_LISTING.md`), add screenshots (6.7" and 6.5" iPhone sizes required), privacy details ("Data not collected"), and the privacy policy URL.
-7. Add the uploaded build to the version and **Submit for Review**.
+The **iOS Build & TestFlight Upload** workflow (`.github/workflows/ios-build.yml`)
+builds and signs the app on a GitHub-hosted Mac and uploads it straight to
+App Store Connect. You trigger it from the **Actions** tab — no Mac, no Xcode.
+Every step below works from a browser (iPad included).
+
+**One-time setup:**
+
+1. **Join the Apple Developer Program** (US$99/yr) — enrol at
+   [developer.apple.com/programs/enroll](https://developer.apple.com/programs/enroll)
+   or via the **Apple Developer** app on iPhone/iPad. Approval can take a day or two.
+2. **Register the app's bundle ID** — [developer.apple.com/account](https://developer.apple.com/account)
+   → Certificates, Identifiers & Profiles → **Identifiers** → **+** → App IDs → App →
+   Bundle ID (explicit): `au.com.coastlinecurrentsolutions.hub`, description "Coastline Hub".
+3. **Note your Team ID** — shown under **Membership details** on the same site (10 characters, e.g. `A1BC23DEF4`).
+4. **Create the app record** — [appstoreconnect.apple.com](https://appstoreconnect.apple.com)
+   → Apps → **+** → New App: platform iOS, name **Coastline Hub**, the bundle ID from step 2, any SKU (e.g. `coastline-hub`).
+5. **Create an API key** — App Store Connect → **Users and Access → Integrations → Team Keys**
+   → Generate API Key, role **App Manager**. Note the **Key ID** and **Issuer ID**, and
+   download the `.p8` file (**one chance only** — keep it safe).
+6. **Base64 the key** — in [Google Cloud Shell](https://shell.cloud.google.com)
+   (upload the `.p8` via the ⋮ menu): `base64 -w0 AuthKey_XXXXXXXXXX.p8` and copy the output.
+7. **Add four repo secrets** — GitHub → repo **Settings → Secrets and variables → Actions**:
+
+   | Secret | Value |
+   | --- | --- |
+   | `APPLE_TEAM_ID` | your Team ID (step 3) |
+   | `APP_STORE_CONNECT_KEY_ID` | the Key ID (step 5) |
+   | `APP_STORE_CONNECT_ISSUER_ID` | the Issuer ID (step 5) |
+   | `APP_STORE_CONNECT_KEY_B64` | the base64 string (step 6) |
+
+**Then, per release:**
+
+1. **Actions** tab → **iOS Build & TestFlight Upload** → **Run workflow**. Signing
+   certificates and provisioning profiles are created and managed automatically in
+   Apple's cloud — nothing to install anywhere.
+2. ~15 minutes later the build appears in App Store Connect → **TestFlight**.
+   Install it on your own iPhone/iPad via the TestFlight app to try it.
+3. When happy: in App Store Connect, fill in the listing (copy in `STORE_LISTING.md`),
+   screenshots (6.7" and 6.5" iPhone sizes), privacy ("Data not collected"), privacy
+   policy URL, attach the build to the version, and **Submit for Review**.
+
+**Alternative:** [Codemagic](https://codemagic.io) (free tier) connects to this repo and
+does the same job with a guided UI — hand it the same App Store Connect API key and it
+manages signing and TestFlight uploads for you.
 
 ### Updating the app later
 

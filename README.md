@@ -48,17 +48,50 @@ npx cap sync         # copies www/ into android/ and ios/
 - **Android:** [Android Studio](https://developer.android.com/studio) (any OS). A Google Play developer account (US$25, one-off).
 - **iOS:** A Mac with [Xcode 15+](https://developer.apple.com/xcode/), plus an [Apple Developer Program](https://developer.apple.com/programs/) membership (US$99/year).
 
-### Android (Google Play)
+### Android (Google Play) — cloud builds, no Android Studio needed
 
-1. `npm install && npx cap sync android`
-2. `npx cap open android` — opens the project in Android Studio.
-3. Create a signing key (once): **Build → Generate Signed App Bundle → Create new keystore**. **Back the keystore up** — losing it means you can't update the app.
-4. Build a release **AAB**: `Build → Generate Signed App Bundle`, choose `release`.
-5. In [Google Play Console](https://play.google.com/console): create the app (name **Coastline Hub**, package `au.com.coastlinecurrentsolutions.hub`), upload the AAB under **Production → Create release**.
-6. Complete the store listing (copy in `STORE_LISTING.md`), content rating questionnaire, data-safety form (see `PRIVACY_POLICY.md` — the app collects no data), and privacy policy URL (host `PRIVACY_POLICY.md` on your website, e.g. `coastlinecurrentsolutions.com.au/app-privacy`).
-7. Submit for review. First review typically takes a few days.
+Every push to `main` (and every PR) triggers the **Android Build** GitHub Action
+(`.github/workflows/android-build.yml`), which produces two downloadable artifacts
+under the run's **Summary** page on the repo's **Actions** tab:
 
-Command-line alternative once a keystore exists:
+- `coastline-hub-release-aab` — the app bundle you upload to Google Play
+- `coastline-hub-debug-apk` — installable directly on any Android phone for testing
+  (enable "install from unknown sources", copy the APK over, tap it)
+
+**One-time: create an upload keystore and add it as repo secrets.** Until these
+secrets exist, the AAB builds unsigned and Play won't accept it.
+
+No local tools needed — [Google Cloud Shell](https://shell.cloud.google.com) is a
+free terminal in your browser with `keytool` preinstalled:
+
+```bash
+keytool -genkeypair -v -keystore upload-keystore.jks -alias upload \
+  -keyalg RSA -keysize 2048 -validity 10000
+base64 -w0 upload-keystore.jks > upload-keystore.b64
+cloudshell download upload-keystore.jks     # back this up somewhere safe!
+cloudshell download upload-keystore.b64
+```
+
+Then on GitHub → repo **Settings → Secrets and variables → Actions → New repository secret**, add:
+
+| Secret | Value |
+| --- | --- |
+| `ANDROID_KEYSTORE_BASE64` | contents of `upload-keystore.b64` |
+| `ANDROID_KEYSTORE_PASSWORD` | the keystore password you chose |
+| `ANDROID_KEY_ALIAS` | `upload` |
+| `ANDROID_KEY_PASSWORD` | the key password (same as keystore password unless you set one) |
+
+**Keep `upload-keystore.jks` backed up privately** (password manager, offline drive).
+Never commit it. If it's lost, Play can reset your upload key, but it's a support process.
+
+**Then, per release:**
+
+1. Push to `main` (or press **Run workflow** on the Actions tab), wait for the green tick, download `coastline-hub-release-aab`.
+2. In [Google Play Console](https://play.google.com/console): create the app (name **Coastline Hub**, package `au.com.coastlinecurrentsolutions.hub`), enroll in **Play App Signing** (default), upload the AAB under **Production → Create release**.
+3. Complete the store listing (copy in `STORE_LISTING.md`), content rating questionnaire, data-safety form (see `PRIVACY_POLICY.md` — the app collects no data), and privacy policy URL (host `PRIVACY_POLICY.md` on your website, e.g. `coastlinecurrentsolutions.com.au/app-privacy`).
+4. Submit for review. First review typically takes a few days.
+
+Local command-line alternative (needs Android SDK + JDK 21):
 
 ```bash
 cd android && ./gradlew bundleRelease

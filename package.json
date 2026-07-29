@@ -11,12 +11,12 @@
     "assets": "npx @capacitor/assets generate --iconBackgroundColor '#0b0b0b' --iconBackgroundColorDark '#0b0b0b' --splashBackgroundColor '#0b0b0b' --splashBackgroundColorDark '#0b0b0b'"
   },
   "dependencies": {
-    "@capacitor/android": "^6.2.0",
-    "@capacitor/core": "^6.2.0",
-    "@capacitor/ios": "^6.2.0"
+    "@capacitor/android": "^7.6.8",
+    "@capacitor/core": "^7.6.8",
+    "@capacitor/ios": "^7.6.8"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.2.0",
+    "@capacitor/cli": "^7.6.8",
     "playwright-core": "^1.62.0"
   }
 }

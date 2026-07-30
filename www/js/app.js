@@ -14,6 +14,9 @@ const ICONS = {
 const esc = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// Generated artwork (tools/generate-art.js) — bundled, so it works offline.
+const catIcon = (catId) => 'img/cat/' + String(catId).replace(/\s+/g, '-') + '.svg';
+
 // ── UI (non-persisted) state ────────────────────────────────────────────────
 const UI = {
   route: 'hub',            // hub | electrical | street | tools
@@ -129,9 +132,12 @@ function itemRow(it, cartKey) {
   const p = Store.priceOf(it);
   const priceLabel = p == null ? 'Quote required' : money(p);
   const img = PRODUCT_IMAGES[it.id];
+  const fallback = catIcon(it.catId);
+  // Supplier photo when we have one; the category icon covers the rest and
+  // also catches a failed load (offline, or the supplier moved the file).
   const thumb = img
-    ? `<img class="item-thumb" src="${esc(img)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'item-thumb ph\\'>${CATEGORY_META[it.catId].mono}</div>'">`
-    : `<div class="item-thumb ph">${CATEGORY_META[it.catId].mono}</div>`;
+    ? `<img class="item-thumb" src="${esc(img)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${fallback}';this.classList.add('ph')">`
+    : `<img class="item-thumb ph" src="${fallback}" alt="" loading="lazy">`;
   const ctl = qty > 0
     ? `<div class="qty-ctl">
          <button class="dec" data-action="qty" data-cart="${cartKey}" data-id="${esc(it.id)}" data-d="-1">–</button>
@@ -170,7 +176,7 @@ function custHome() {
     const prices = cat.items.map(it => Store.priceOf(it)).filter(p => p != null);
     const fromLabel = prices.length ? 'From ' + money(Math.min(...prices)) : 'Quote required';
     return `<button class="cat-tile" data-action="open-cat" data-cat="${esc(cat.id)}">
-      <div class="mono" style="background:${cat.color}">${cat.mono}</div>
+      <img class="cat-icon" src="${catIcon(cat.id)}" alt="" loading="lazy">
       <div>
         <div class="cname">${esc(cat.name)}</div>
         <div class="cfrom">${fromLabel}</div>
@@ -182,6 +188,7 @@ function custHome() {
   <div class="topbar" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:10px">
       <button class="back" data-action="nav" data-route="hub" aria-label="Back to hub">‹</button>
+      <img src="img/logo.svg" alt="" style="width:34px;height:34px;border-radius:9px;flex-shrink:0">
       <div>
         <div class="manrope" style="font-weight:800;font-size:15px">${esc(COMPANY.name)}</div>
         <div style="font-size:11px;color:var(--muted)">${esc(COMPANY.tagline)}</div>
@@ -562,20 +569,10 @@ function staffCustomers() {
 }
 
 // ── Street ──
-const STREET_GRADS = [
-  'linear-gradient(150deg,#2a1214,#0c0c0e 70%)',
-  'linear-gradient(150deg,#232326,#0c0c0e 70%)',
-  'linear-gradient(150deg,#2e2620,#0e0c0c 70%)',
-  'linear-gradient(150deg,#1c2229,#0c0d0e 70%)',
-];
-
-function streetCard(p, i) {
+function streetCard(p) {
   return `<div class="street-card">
     ${p.tag ? `<div class="street-tag-chip">${esc(p.tag)}</div>` : ''}
-    <div class="street-img" style="background:${STREET_GRADS[i % STREET_GRADS.length]}">
-      <div class="glyph" style="color:${i % 2 ? '#d8cdba' : '#d01824'}">CS</div>
-      <div class="sub-glyph">${esc(p.collection || 'Volt Division')}</div>
-    </div>
+    <img class="street-img" src="img/street/${esc(p.id)}.svg" alt="${esc(p.name)}" loading="lazy">
     <div class="street-meta">
       <div>
         ${p.collection ? `<div class="street-coll">${esc(p.collection)}</div>` : ''}
@@ -655,6 +652,9 @@ function viewTools() {
       <div style="font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:14px">Concept · Pre-Prototype</div>
       <h1 class="oswald" style="font-size:30px;font-weight:700;margin:0 0 16px;line-height:1.15">The Cable Retrieval &amp; Inspection Tool</h1>
       <p style="color:#b0b0b0;font-size:14px;line-height:1.7;margin:0">A purpose-built cable retrieval system designed by an electrician, for electricians — replacing the bent bucket handle for good.</p>
+    </div>
+    <div style="padding:0 20px 24px">
+      <img src="img/tools/tool.svg" alt="Cable retrieval hook tool and camera probe" style="width:100%;display:block;border:1px solid #262626;border-radius:12px">
     </div>
     <div style="padding:0 20px 30px;display:flex;flex-direction:column;gap:14px">
       <div class="card" style="border-color:#262626">

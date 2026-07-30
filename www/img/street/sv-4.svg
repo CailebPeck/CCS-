@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" width="400" height="480" role="img" aria-label="Live current mascot">
+<defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f1ec"/><stop offset="1" stop-color="#ddd8cd"/></linearGradient></defs>
+<rect width="400" height="480" fill="url(#b)"/>
+<circle cx="200" cy="228" r="150" fill="rgba(208,24,36,.07)"/>
+<g stroke="#a3830c" stroke-width="9" stroke-linecap="round" fill="none">
+<path d="M150 218 Q112 240 120 276"/><path d="M268 236 Q302 254 296 288"/>
+</g>
+<g stroke="#2a2a2e" stroke-width="10" stroke-linecap="round">
+<path d="M170 392 L164 434"/><path d="M230 392 L236 434"/>
+</g>
+<path d="M244 78 L120 264 L192 264 L168 402 L292 216 L220 216 Z" fill="#f2c31c" stroke="#a3830c" stroke-width="5" stroke-linejoin="round"/>
+<g transform="translate(196,190) scale(1)">
+<circle cx="-15" cy="0" r="10" fill="#fff"/><circle cx="15" cy="0" r="10" fill="#fff"/>
+<circle cx="-12" cy="2" r="5" fill="#141414"/><circle cx="18" cy="2" r="5" fill="#141414"/>
+<path d="M-16 20 Q0 36 16 20" fill="none" stroke="#141414" stroke-width="5" stroke-linecap="round"/>
+</g>
+<text x="200" y="462" text-anchor="middle" font-family="Oswald,Arial Narrow,sans-serif" font-weight="700" font-size="19" letter-spacing="5" fill="#101010">VOLT DIVISION</text>
+</svg>

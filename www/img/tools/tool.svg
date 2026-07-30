@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" width="800" height="460" role="img" aria-label="Cable retrieval hook tool and camera probe">
+<defs>
+<linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9ced4"/><stop offset="1" stop-color="#7d848c"/></linearGradient>
+<linearGradient id="grip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e3238"/><stop offset="1" stop-color="#191c20"/></linearGradient>
+<radialGradient id="led" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#fff8d0"/><stop offset="1" stop-color="#e0b05a" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="800" height="460" fill="#0d0d0f"/>
+<!-- wall cavity hint -->
+<g stroke="#1e1e22" stroke-width="3" fill="none"><path d="M60 40 V420 M740 40 V420"/></g>
+<rect x="60" y="40" width="120" height="380" fill="rgba(255,255,255,.015)"/>
+<rect x="620" y="40" width="120" height="380" fill="rgba(255,255,255,.015)"/>
+<!-- HOOK TOOL -->
+<g>
+<rect x="96" y="150" width="150" height="54" rx="20" fill="url(#grip)" stroke="#3a3f46" stroke-width="2"/>
+<g stroke="#4a5058" stroke-width="4"><path d="M126 158v38M150 158v38M174 158v38"/></g>
+<circle cx="222" cy="177" r="13" fill="#e0b05a"/>
+<rect x="246" y="168" width="180" height="18" rx="9" fill="url(#metal)"/>
+<rect x="420" y="171" width="130" height="12" rx="6" fill="#9aa1a9"/>
+<path d="M550 177 q56 0 56 46 q0 40 -44 40 q-30 0 -34 -28" fill="none" stroke="url(#metal)" stroke-width="14" stroke-linecap="round"/>
+<text x="120" y="128" font-family="Oswald,Arial Narrow,sans-serif" font-size="19" letter-spacing="3" fill="#e0b05a">HOOK TOOL</text>
+</g>
+<!-- CAMERA PROBE -->
+<g>
+<rect x="96" y="300" width="140" height="50" rx="18" fill="url(#grip)" stroke="#3a3f46" stroke-width="2"/>
+<rect x="122" y="314" width="88" height="22" rx="5" fill="#1a2b32" stroke="#0e1a1f" stroke-width="2"/>
+<path d="M236 325 q120 0 180 -46 q64 -48 130 -10" fill="none" stroke="none"/>
+<path d="M236 325 q120 0 180 -46 q64 -48 130 -10" fill="none" stroke="url(#metal)" stroke-width="12" stroke-linecap="round"/>
+<g fill="#2a2e34" stroke="#4a5058" stroke-width="2">
+<circle cx="566" cy="272" r="26"/>
+</g>
+<circle cx="566" cy="272" r="13" fill="#0f1418" stroke="#8ec5e8" stroke-width="3"/>
+<circle cx="566" cy="272" r="5" fill="#8ec5e8"/>
+<circle cx="612" cy="256" r="34" fill="url(#led)"/>
+<circle cx="606" cy="258" r="7" fill="#ffe9a8"/>
+<text x="120" y="386" font-family="Oswald,Arial Narrow,sans-serif" font-size="19" letter-spacing="3" fill="#e0b05a">CAMERA PROBE</text>
+</g>
+<!-- cable being hooked -->
+<path d="M660 90 q-40 130 20 250 q14 30 46 40" fill="none" stroke="#7a4a2a" stroke-width="10" stroke-linecap="round" opacity=".85"/>
+</svg>

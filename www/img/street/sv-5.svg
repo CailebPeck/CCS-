@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" width="400" height="480" role="img" aria-label="Tool crew mascots">
+<defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f1ec"/><stop offset="1" stop-color="#ddd8cd"/></linearGradient></defs>
+<rect width="400" height="480" fill="url(#b)"/>
+<circle cx="200" cy="228" r="150" fill="rgba(208,24,36,.07)"/>
+<g stroke="#2a2a2e" stroke-width="7" stroke-linecap="round">
+<path d="M84 356 L80 392M118 356 L122 392"/>
+<path d="M182 372 L178 410M222 372 L226 410"/>
+<path d="M290 356 L286 392M324 356 L328 392"/>
+</g>
+<!-- multimeter -->
+<g>
+<rect x="58" y="196" width="86" height="164" rx="18" fill="#e8b21f" stroke="#a37c12" stroke-width="4"/>
+<rect x="72" y="212" width="58" height="42" rx="7" fill="#1d2b24" stroke="#0e1713" stroke-width="3"/>
+<g transform="translate(101,234) scale(0.52)">
+<circle cx="-15" cy="0" r="10" fill="#fff"/><circle cx="15" cy="0" r="10" fill="#fff"/>
+<circle cx="-12" cy="2" r="5" fill="#141414"/><circle cx="18" cy="2" r="5" fill="#141414"/>
+<path d="M-16 20 Q0 36 16 20" fill="none" stroke="#141414" stroke-width="5" stroke-linecap="round"/>
+</g>
+<circle cx="101" cy="300" r="22" fill="#2a2a2e"/><path d="M101 300 L101 286" stroke="#e8b21f" stroke-width="5" stroke-linecap="round"/>
+</g>
+<!-- screwdriver (tallest, middle) -->
+<g>
+<rect x="172" y="168" width="60" height="140" rx="22" fill="#d0402f" stroke="#8e2b1f" stroke-width="4"/>
+<g stroke="#8e2b1f" stroke-width="4" opacity=".5"><path d="M172 206h60M172 236h60"/></g>
+<g transform="translate(202,214) scale(0.52)">
+<circle cx="-15" cy="0" r="10" fill="#fff"/><circle cx="15" cy="0" r="10" fill="#fff"/>
+<circle cx="-12" cy="2" r="5" fill="#141414"/><circle cx="18" cy="2" r="5" fill="#141414"/>
+<path d="M-16 20 Q0 36 16 20" fill="none" stroke="#141414" stroke-width="5" stroke-linecap="round"/>
+</g>
+<rect x="194" y="306" width="16" height="52" fill="#b9bec4" stroke="#8b9096" stroke-width="2"/>
+<path d="M194 358 L210 358 L205 374 L199 374 Z" fill="#8b9096"/>
+</g>
+<!-- bolt -->
+<g>
+<path d="M330 190 L268 288 L306 288 L294 366 L356 268 L318 268 Z" fill="#f2c31c" stroke="#a3830c" stroke-width="4" stroke-linejoin="round"/>
+<g transform="translate(305,246) scale(0.5)">
+<circle cx="-15" cy="0" r="10" fill="#fff"/><circle cx="15" cy="0" r="10" fill="#fff"/>
+<circle cx="-12" cy="2" r="5" fill="#141414"/><circle cx="18" cy="2" r="5" fill="#141414"/>
+<path d="M-16 20 Q0 36 16 20" fill="none" stroke="#141414" stroke-width="5" stroke-linecap="round"/>
+</g>
+</g>
+<text x="200" y="462" text-anchor="middle" font-family="Oswald,Arial Narrow,sans-serif" font-weight="700" font-size="19" letter-spacing="5" fill="#101010">VOLT DIVISION</text>
+</svg>

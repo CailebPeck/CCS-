@@ -79,9 +79,10 @@ function viewHub() {
   <div class="screen">
     <div class="hub">
       <div class="hub-brand">
-        <div class="hub-kicker">Built on the Coast · Est. 2024</div>
-        <h1 class="hub-title">COASTLINE GROUP</h1>
-        <p class="hub-sub">Electrical services, tools, and the streetwear label — three brands, one crew.</p>
+        <img src="img/brand/roundel.svg" alt="" style="width:96px;height:96px;display:block;margin:0 auto 16px">
+        <h1 class="hub-title">COASTLINE</h1>
+        <div class="hub-kicker" style="margin-bottom:14px">CURRENT SOLUTIONS · EST. 2024</div>
+        <p class="hub-sub">${esc(BRAND.motto)}</p>
       </div>
       <div class="hub-cards">
         <button class="hub-card" data-action="nav" data-route="electrical">
@@ -570,13 +571,15 @@ function staffCustomers() {
 
 // ── Street ──
 function streetCard(p) {
+  const kicker = p.collection || p.line || '';
   return `<div class="street-card">
     ${p.tag ? `<div class="street-tag-chip">${esc(p.tag)}</div>` : ''}
-    <img class="street-img" src="img/street/${esc(p.id)}.svg" alt="${esc(p.name)}" loading="lazy">
+    <img class="street-img" src="img/street/${esc(p.id)}.webp" alt="${esc(p.name)}" loading="lazy">
     <div class="street-meta">
-      <div>
-        ${p.collection ? `<div class="street-coll">${esc(p.collection)}</div>` : ''}
+      <div style="min-width:0">
+        ${kicker ? `<div class="street-coll">${esc(kicker)}</div>` : ''}
         <div class="street-name">${esc(p.name)}</div>
+        ${p.colour ? `<div class="street-colour">${esc(p.colour)}</div>` : ''}
         <div class="street-price">A$${p.price.toFixed(2)}</div>
       </div>
       <button class="street-add" data-action="street-add">+</button>

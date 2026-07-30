@@ -177,7 +177,7 @@ a { color: var(--red); }
 }
 .street-hero {
   position: relative; min-height: 420px; display: flex; align-items: flex-end;
-  background: url('../img/street/hero.svg') center / cover no-repeat, #0a0a0a;
+  background: url('../img/street/hero.webp') center / cover no-repeat, #0a0a0a;
   overflow: hidden;
 }
 /* Scrim so the headline stays readable over the artwork. */
@@ -204,6 +204,7 @@ a { color: var(--red); }
   width: 100%; aspect-ratio: 5 / 6; display: block;
   object-fit: cover; background: #0d0d0f;
 }
+.street-colour { font-size: 11px; color: #8a8a8a; margin-bottom: 4px; }
 .street-tag-chip {
   position: absolute; top: 10px; left: 10px; background: var(--street-red); color: #fff;
   font-family: 'Oswald', 'Manrope', sans-serif; font-size: 9px; letter-spacing: 1.5px;

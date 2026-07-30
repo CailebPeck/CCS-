@@ -155,22 +155,32 @@ manages signing and TestFlight uploads for you.
 2. `npx cap sync`
 3. Rebuild + re-upload through the same flow.
 
-### Changing the in-app artwork
+### Artwork and branding
 
-All artwork in the app — the Coastline Street garment graphics, the Volt Division
-mascots, the Street hero, the CCS Tools illustration, category icons and the logo
-mark — is drawn in code by `tools/generate-art.js` and written to `www/img/`.
-Nothing is hot-linked, so it all works offline.
+Two kinds of image live in `www/img/`:
 
-Edit the colourways, graphics or shapes in that file, then:
+**Product photography** (`www/img/street/*.webp`) — cropped from the Coastline
+brand sheets and product mockups. To swap in a better shot, replace the file
+keeping the same name; the id in `STREET_PRODUCTS` / `STREET_VOLT`
+(`www/js/data.js`) is the filename stem.
+
+**Brand marks, icons and illustrations** — drawn in code by
+`tools/generate-art.js`, so they scale cleanly and work offline:
+
+- `brand/roundel.svg` — the wave + bolt mark (also the app icon and splash)
+- `brand/wordmark.svg`, `brand/bolt.svg` — lockup and sleeve icon
+- `cat/*.svg` — the 13 electrical category icons
+- `tools/tool.svg` — the CCS Tools hook + camera probe illustration
 
 ```bash
 node tools/generate-art.js && npx cap sync
 ```
 
-Swapping in real photography later is easy: drop the files into `www/img/street/`
-using the same names (`st-1.svg` … `sv-6.svg`, or change the extension in
-`streetCard()` in `www/js/app.js`).
+> **The roundel is a hand-rebuilt approximation**, drawn from the brand sheets
+> because the original artwork file wasn't available. If you have the real
+> logo as a file (SVG preferred, or a high-res transparent PNG), drop it in as
+> `www/img/brand/roundel.svg`, re-run `npm run assets` to regenerate the app
+> icons, then `npx cap sync`.
 
 ### Regenerating icons/splash
 

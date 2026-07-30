@@ -282,33 +282,45 @@ const PRODUCT_IMAGES = {
   'hager-sbr380-main-switch-3p-80a': 'https://www.sparkydirect.com.au/assets/full/SBR380.jpg',
 };
 
-// ── Coastline Street catalogue (showcase) ──────────────────────────────────
+// ── Coastline Street — Collection 001 "Bloodline" ──────────────────────────
+// Names, colourways and taglines are from the Coastline Current Solutions
+// brand sheets. NOTE: prices are placeholders — set real RRPs before launch.
 const STREET_PRODUCTS = [
-  { id: 'st-1', name: 'Bloodline Wave Tee', collection: 'Bloodline', price: 89.95, tag: 'New' },
-  { id: 'st-2', name: 'Wave Badge Tee — Grey Marle', collection: 'Riptide', price: 89.95, tag: '' },
-  { id: 'st-3', name: 'Coast/Line Bolt Tee — White', collection: 'Static', price: 89.95, tag: '' },
-  { id: 'st-4', name: 'Compass Tee — Vintage Black', collection: 'Volt', price: 94.95, tag: '' },
-  { id: 'st-5', name: 'Riptide Hoodie — Black', collection: 'Riptide', price: 169.95, tag: 'Restock' },
-  { id: 'st-6', name: 'Compass Long Sleeve', collection: 'Volt', price: 109.95, tag: '' },
-  { id: 'st-7', name: 'Frequency Tank — Washed Black', collection: 'Static', price: 69.95, tag: '' },
-  { id: 'st-8', name: 'Quarter Zip — Washed Black', collection: 'Shadow', price: 149.95, tag: 'Low Stock' },
+  { id: 'st-bloodline', name: 'Bloodline Tee', colour: 'Washed Black / Red', collection: 'Bloodline', price: 89.95, tag: 'New' },
+  { id: 'range-2', name: 'Mono Tee', colour: 'Black / White', collection: 'Mono', price: 89.95, tag: '' },
+  { id: 'range-3', name: 'Faded Tee', colour: 'Vintage Black', collection: 'Faded', price: 89.95, tag: '' },
+  { id: 'range-4', name: 'Shadow Tee', colour: 'All Black', collection: 'Shadow', price: 94.95, tag: '' },
+  { id: 'range-6', name: 'Bloodline Hoodie', colour: '480gsm Black', collection: 'Bloodline', price: 169.95, tag: 'Heavyweight' },
+  { id: 'range-5', name: 'Bloodline Quarter Zip', colour: 'Black', collection: 'Bloodline', price: 149.95, tag: '' },
+  { id: 'range-7', name: 'Crewneck', colour: 'Black', collection: 'Mono', price: 139.95, tag: '' },
+  { id: 'range-8', name: 'Work Shirt', colour: 'Black', collection: 'Workwear', price: 129.95, tag: '' },
 ];
 
+// Volt Division — the mascot series
 const STREET_VOLT = [
-  { id: 'sv-1', name: 'Multimeter Mascot Tee', price: 94.95 },
-  { id: 'sv-2', name: 'Volt Screwdriver Tee — White', price: 94.95 },
-  { id: 'sv-3', name: 'Pliers Runner Tee — Grey', price: 94.95 },
-  { id: 'sv-4', name: 'Live Current Tee — Grey', price: 94.95 },
-  { id: 'sv-5', name: 'Tool Crew Tee — Bone', price: 94.95 },
-  { id: 'sv-6', name: 'Lock Out & Live Tee', price: 94.95 },
+  { id: 'sv-toolcrew', name: 'Tool Crew Tee', colour: 'Bone', price: 94.95, line: 'Built on Power' },
+  { id: 'sv-lockout', name: 'Lock Out & Live Tee', colour: 'Washed Black', price: 94.95, line: 'Safe Isolation' },
+  { id: 'sv-livecurrent', name: 'Live Current Tee', colour: 'Washed Grey', price: 94.95, line: 'Powering What Matters' },
+  { id: 'sv-volt', name: 'Volt Division Tee', colour: 'White', price: 94.95, line: 'Engineered to Perform' },
+  { id: 'sv-pliers', name: 'Pliers Runner Tee', colour: 'Grey Marle', price: 94.95, line: 'Built Different. Wired to Deliver.' },
 ];
 
-const STREET_CATEGORIES = [
-  { name: 'TEES', count: '12 styles' },
-  { name: 'HOODIES & FLEECE', count: '8 styles' },
-  { name: 'TANKS', count: '3 styles' },
-  { name: 'HEADWEAR', count: '6 styles' },
-];
+// Brand copy straight from the brand sheets
+const BRAND = {
+  est: 'EST. 2024',
+  collection: 'Collection 001 — Bloodline',
+  motto: 'BUILT ON THE COAST. POWERED BY QUALITY.',
+  motto2: 'INSPIRED BY STRENGTH. DRIVEN BY PURPOSE.',
+  pillars: [
+    { icon: 'bolt', text: 'ELECTRICAL. POWER. ENERGY.' },
+    { icon: 'ccs', text: 'QUALITY. RELIABILITY. SOLUTIONS.' },
+    { icon: 'wave', text: 'BUILT ON THE COAST. POWERED BY QUALITY.' },
+  ],
+  footer: 'TRUSTED. EXPERIENCED. DEDICATED.',
+  instagram: '@coastlinecurrentsolutions',
+  colourways: ['Black', 'Washed Black', 'Vintage Black', 'Washed Grey'],
+  details: ['3D puff embroidery', 'Embroidered wave patch', 'CCS sleeve embroidery', 'Woven hem label'],
+};
 
 const TOOLS_ROADMAP = [
   '1. Functional prototype', '2. Refined CAD model', '3. 3D printed prototype',

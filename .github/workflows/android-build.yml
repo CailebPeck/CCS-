@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # lets the job refresh the public 'demo' release with the latest APK
     env:
       HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
@@ -71,3 +73,18 @@ jobs:
           name: coastline-hub-debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 30
+
+      # Keep a public, one-tap download of the latest demo APK at
+      # /releases/tag/demo — installable on any Android phone without
+      # a GitHub account. Skipped on pull requests.
+      - name: Publish demo APK to public download link
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk coastline-hub-demo.apk
+          gh release view demo --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create demo --repo "$GITHUB_REPOSITORY" \
+              --title "Coastline Hub — demo app (Android)" \
+              --notes "Latest demo build. On your Android phone: tap coastline-hub-demo.apk below, open the download, and allow the install when prompted. Updated automatically on every change."
+          gh release upload demo coastline-hub-demo.apk --repo "$GITHUB_REPOSITORY" --clobber

@@ -95,6 +95,11 @@ const Store = {
       date: s.form.date || 'Date to be confirmed',
       time: s.form.timeSlot || 'Time to be confirmed',
       address: s.form.address || 'Address to be confirmed',
+      // Carried through so the confirmation screen can hand the whole booking
+      // to an email or text — nothing is transmitted automatically.
+      name: s.form.name || '',
+      phone: s.form.phone || '',
+      notes: s.jobNotes || '',
       total: hasCustom ? null : subtotal,
       hasCustom,
       totalLabel: hasCustom ? (subtotal > 0 ? money(subtotal) + ' + quote' : 'Quote required') : money(subtotal),

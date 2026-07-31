@@ -20,6 +20,26 @@
   font-display: swap;
 }
 
+/* Manrope and Inter, self-hosted for the same reasons: the app has to work in
+   a roof cavity with no signal, and nothing should be fetched from Google on
+   a customer's behalf. These are the variable versions covering every weight
+   in one file — 71 KB for both, against 261 KB for the seven static cuts the
+   app was requesting. Latin subset only. */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url('../fonts/manrope-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../fonts/inter-var.woff2') format('woff2');
+}
+
 :root {
   --bg: #0b0b0b;
   --panel: #1a1a1b;
@@ -242,6 +262,19 @@ a { color: var(--red); }
   width: 32px; height: 32px; cursor: pointer; flex-shrink: 0;
 }
 .street-add:active { background: var(--street-red); border-color: var(--street-red); color: #fff; }
+
+/* ── Staff quote actions ── */
+.quote-send {
+  flex: 1; text-align: center; text-decoration: none; border-radius: 10px;
+  padding: 11px 6px; font-family: 'Manrope', sans-serif; font-weight: 800;
+  font-size: 12.5px; background: var(--red); color: #fff;
+}
+/* Nothing to send yet — greyed and inert rather than silently doing nothing. */
+.quote-send.off { background: #232325; color: rgba(255, 255, 255, 0.3); pointer-events: none; }
+.sync-pending {
+  margin-top: 8px; text-align: center; font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.28); letter-spacing: 0.02em;
+}
 
 /* ── Street: product detail ── */
 /* Swipeable gallery built on scroll-snap — no JS, so it keeps momentum

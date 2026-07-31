@@ -79,7 +79,7 @@ function viewHub() {
   <div class="screen">
     <div class="hub">
       <div class="hub-brand">
-        <img src="img/brand/roundel.svg" alt="" style="width:96px;height:96px;display:block;margin:0 auto 16px">
+        <img src="img/brand/roundel.webp" alt="Coastline Current Solutions" width="96" height="96" style="width:96px;height:96px;display:block;margin:0 auto 16px">
         <h1 class="hub-title">COASTLINE</h1>
         <div class="hub-kicker" style="margin-bottom:14px">CURRENT SOLUTIONS · EST. 2024</div>
         <p class="hub-sub">${esc(BRAND.motto)}</p>
@@ -189,7 +189,7 @@ function custHome() {
   <div class="topbar" style="justify-content:space-between">
     <div style="display:flex;align-items:center;gap:10px">
       <button class="back" data-action="nav" data-route="hub" aria-label="Back to hub">‹</button>
-      <img src="img/logo.svg" alt="" style="width:34px;height:34px;border-radius:9px;flex-shrink:0">
+      <img src="img/brand/roundel.webp" alt="" width="34" height="34" style="width:34px;height:34px;flex-shrink:0">
       <div>
         <div class="manrope" style="font-weight:800;font-size:15px">${esc(COMPANY.name)}</div>
         <div style="font-size:11px;color:var(--muted)">${esc(COMPANY.tagline)}</div>

@@ -91,83 +91,13 @@ Object.entries(CATS).forEach(([id, [tint, body]]) => {
 });
 
 // ── Brand marks ────────────────────────────────────────────────────────────
-// Redrawn from the Coastline Current Solutions brand sheets so they scale
-// cleanly and can sit on any background. Three marks are in use:
-//   roundel  — the wave + bolt badge that appears on the mascot range
-//   wordmark — the boxed COASTLINE / CURRENT SOLUTIONS lockup
-//   bolt     — the sleeve icon
-
-const BRAND_RED = '#d0181f';
-
-// The official Coastline mark: red sun and grey breaking wave inside a
-// double ring, split by a red bolt with a white keyline.
-const RED_DEEP = '#a8151c';
-const waveBolt = () => `
-  <circle cx="60" cy="60" r="52" fill="#161616"/>
-  <circle cx="60" cy="60" r="46" fill="none" stroke="${BRAND_RED}" stroke-width="3.5"/>
-  <circle cx="60" cy="60" r="43" fill="#dedede"/>
-  <circle cx="48" cy="42" r="16" fill="${BRAND_RED}"/>
-  <g clip-path="url(#dial)" stroke="#141414" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
-    <!-- open water behind -->
-    <path d="M12 84 q14 7 27 2 q15 -6 28 2 q13 6 29 -5 v34 h-84 z" fill="#6d6d6d"/>
-    <!-- the curl: a breaking wave rising from the left -->
-    <path d="M18 104 C13 70 28 45 51 43 C69 41 80 54 81 68
-             C74 56 61 51 50 58 C37 66 32 85 34 104 Z" fill="#949494"/>
-    <path d="M27 104 C24 78 33 60 49 56 C60 53 70 58 76 66
-             C67 59 56 59 47 68 C38 77 35 90 36 104 Z" fill="#6f6f6f" stroke="none"/>
-    <!-- white foam breaking off the crest -->
-    <path d="M19 76 C21 55 34 42 52 42 C67 42 77 51 81 63
-             C74 56 65 53 57 56 C63 49 57 43 50 45 C44 47 43 53 45 58
-             C39 55 32 58 28 65 C25 70 23 74 19 76 Z" fill="#fff"/>
-    <!-- foam curls -->
-    <path d="M36 52 q6 -6 13 -3 M56 49 q6 -1 9 4" fill="none" stroke-width="1.3"/>
-    <!-- second, smaller wave to the right -->
-    <path d="M76 92 C78 80 87 74 94 78 C101 82 102 92 99 100
-             C95 92 88 90 83 94 C80 96 77 95 76 92 Z" fill="#fff"/>
-    <path d="M12 106 h96 v14 h-96 z" fill="#6d6d6d" stroke="none"/>
-  </g>
-  <path d="M84 12 L46 66 L64 66 L50 110 L92 54 L72 54 Z"
-        fill="${BRAND_RED}" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M84 12 L46 66 L64 66 L50 110 L92 54 L72 54 Z"
-        fill="none" stroke="#161616" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M84 12 L64 66 L72 54 Z" fill="${RED_DEEP}" opacity=".55"/>`;
-
-const DIAL_CLIP = '<defs><clipPath id="dial"><circle cx="60" cy="60" r="43"/></clipPath></defs>';
-
-// The mark on its own — transparent ground, works on light or dark
-write('brand/roundel.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Coastline Current Solutions">
-${DIAL_CLIP}${waveBolt()}
-</svg>`);
-write('brand/roundel-line.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Coastline Current Solutions">
-${DIAL_CLIP}${waveBolt()}
-</svg>`);
-
-// The wordmark lockup is built by tools/generate-wordmark.py instead, which
-// converts the Brothers lettering to outlines using the real font file. It has
-// to be done that way: an SVG loaded through an <img> tag — which is how the
-// app uses these marks — cannot reach a webfont, so <text> here would silently
-// fall back to whatever the device happens to have.
-
-// Sleeve bolt icon
-write('brand/bolt.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96" width="64" height="96" role="img" aria-label="bolt">
-<path d="M46 4 L10 54 L28 54 L18 92 L54 40 L34 40 Z" fill="${BRAND_RED}"/>
-</svg>`);
-
-// ── App logo mark ──────────────────────────────────────────────────────────
-// App logo tile — the roundel on a rounded dark square, used in the app header
-write('logo.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Coastline Current Solutions">
-<defs><linearGradient id="l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d1d20"/><stop offset="1" stop-color="#0b0b0b"/></linearGradient>
-<clipPath id="dial"><circle cx="60" cy="60" r="43"/></clipPath></defs>
-<rect width="120" height="120" rx="28" fill="url(#l)"/>
-<g transform="translate(60,60) scale(.86) translate(-60,-60)">${waveBolt()}</g>
-</svg>`);
-
-// Store icon source — the mark centred on white, 1024px, no rounded corners
-// (Apple and Google apply their own masking).
-write('appicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Coastline Current Solutions">
-<defs><clipPath id="dial"><circle cx="60" cy="60" r="43"/></clipPath></defs>
-<rect width="1024" height="1024" fill="#ffffff"/>
-<g transform="translate(512,512) scale(7.4) translate(-60,-60)">${waveBolt()}</g>
-</svg>`);
+// Not generated here any more. The real logo files from the designer live in
+// brand-source/ and tools/generate-brand.py derives every mark from them —
+// roundel, wordmark, badge, the store icon and the splash screens. What used
+// to sit here was a hand-drawn approximation of the roundel, kept only until
+// the artwork arrived; regenerating it now would overwrite the real thing.
+//
+// This file still owns the category icons and the CCS Tools illustration
+// above, which have no vector master.
 
 console.log('Artwork written to www/img/');

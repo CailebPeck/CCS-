@@ -243,6 +243,52 @@ a { color: var(--red); }
 }
 .street-add:active { background: var(--street-red); border-color: var(--street-red); color: #fff; }
 
+/* ── Street: product detail ── */
+/* Swipeable gallery built on scroll-snap — no JS, so it keeps momentum
+   scrolling on iOS and works with a trackpad or arrow keys on desktop. */
+.pdp-gallery { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.pdp-gallery::-webkit-scrollbar { display: none; }
+.pdp-track { display: flex; }
+.pdp-img {
+  flex: 0 0 100%; width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
+  scroll-snap-align: center; background: #0d0d0f; display: block;
+}
+.pdp-dots { display: flex; justify-content: center; gap: 6px; padding: 12px 0 0; }
+.pdp-dot { width: 6px; height: 6px; border-radius: 50%; background: #333; }
+.pdp-dot.on { background: var(--street-red); }
+
+/* Add-to-bag stays reachable without scrolling back up. */
+.pdp-bar {
+  position: sticky; bottom: 0; padding: 12px 20px calc(12px + var(--sab));
+  background: linear-gradient(180deg, rgba(5, 5, 5, 0) 0%, #050505 22%);
+}
+
+.size-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.size-btn {
+  min-width: 52px; padding: 11px 4px; background: transparent; color: #c9c9c9;
+  border: 1px solid #2c2c2c; font-family: 'Manrope', sans-serif; font-weight: 700;
+  font-size: 13px; cursor: pointer;
+}
+.size-btn.on { border-color: var(--street-red); background: var(--street-red); color: #fff; }
+
+.street-bag {
+  position: relative; background: transparent; border: none; color: #c9c9c9;
+  cursor: pointer; padding: 4px; display: flex; align-items: center;
+}
+.street-bag-count {
+  position: absolute; top: -2px; right: -4px; min-width: 16px; height: 16px;
+  border-radius: 8px; background: var(--street-red); color: #fff; font-size: 10px;
+  font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 3px;
+}
+
+/* ── Street: bag ── */
+.bag-line { display: flex; gap: 12px; padding: 16px 4px; border-bottom: 1px solid #161616; }
+.bag-thumb { width: 68px; height: 85px; object-fit: cover; background: #0d0d0f; flex-shrink: 0; }
+.link-btn {
+  background: none; border: none; color: #6f6f6f; font-size: 12px;
+  text-decoration: underline; cursor: pointer; padding: 0;
+}
+
 /* ── Tools ── */
 .tools-chip { background: var(--panel); border: 1px solid #262626; border-radius: 6px; padding: 9px 14px; font-size: 12px; color: #c9c9c9; }
 

@@ -285,24 +285,43 @@ const PRODUCT_IMAGES = {
 // ── Coastline Street — Collection 001 "Bloodline" ──────────────────────────
 // Names, colourways and taglines are from the Coastline Current Solutions
 // brand sheets. NOTE: prices are placeholders — set real RRPs before launch.
+// Sizes are the same across the range; override per product if that changes.
+const STREET_SIZES = ['S', 'M', 'L', 'XL', '2XL'];
+
+// `images` lists the shots for the product carousel, first one is the card
+// thumbnail. Only one photo exists per garment so far — the carousel handles
+// any number, so adding more here is all that is needed to light it up.
 const STREET_PRODUCTS = [
-  { id: 'st-bloodline', name: 'Bloodline Tee', colour: 'Washed Black / Red', collection: 'Bloodline', price: 89.95, tag: 'New' },
-  { id: 'range-2', name: 'Mono Tee', colour: 'Black / White', collection: 'Mono', price: 89.95, tag: '' },
-  { id: 'range-3', name: 'Faded Tee', colour: 'Vintage Black', collection: 'Faded', price: 89.95, tag: '' },
-  { id: 'range-4', name: 'Shadow Tee', colour: 'All Black', collection: 'Shadow', price: 94.95, tag: '' },
-  { id: 'range-6', name: 'Bloodline Hoodie', colour: '480gsm Black', collection: 'Bloodline', price: 169.95, tag: 'Heavyweight' },
-  { id: 'range-5', name: 'Bloodline Quarter Zip', colour: 'Black', collection: 'Bloodline', price: 149.95, tag: '' },
-  { id: 'range-7', name: 'Crewneck', colour: 'Black', collection: 'Mono', price: 139.95, tag: '' },
-  { id: 'range-8', name: 'Work Shirt', colour: 'Black', collection: 'Workwear', price: 129.95, tag: '' },
+  { id: 'st-bloodline', name: 'Bloodline Tee', colour: 'Washed Black / Red', collection: 'Bloodline', price: 89.95, tag: 'New',
+    desc: 'The first drop. Oversized 320gsm heavyweight cotton with the Coastline mark in raised puff embroidery across the back.' },
+  { id: 'range-2', name: 'Mono Tee', colour: 'Black / White', collection: 'Mono', price: 89.95, tag: '',
+    desc: 'Clean single-colour execution of the Coastline lockout. 320gsm heavyweight cotton, boxy oversized fit.' },
+  { id: 'range-3', name: 'Faded Tee', colour: 'Vintage Black', collection: 'Faded', price: 89.95, tag: '',
+    desc: 'Garment-washed for a worn-in look off the shelf. Softer hand feel, same 320gsm weight.' },
+  { id: 'range-4', name: 'Shadow Tee', colour: 'All Black', collection: 'Shadow', price: 94.95, tag: '',
+    desc: 'Tonal black-on-black print. Understated on site, sharp off it. 320gsm heavyweight cotton.' },
+  { id: 'range-6', name: 'Bloodline Hoodie', colour: '480gsm Black', collection: 'Bloodline', price: 169.95, tag: 'Heavyweight',
+    desc: 'Proper 480gsm fleece with a double-lined hood and ribbed cuffs. Heavy enough for a 5am start on the coast.' },
+  { id: 'range-5', name: 'Bloodline Quarter Zip', colour: 'Black', collection: 'Bloodline', price: 149.95, tag: '',
+    desc: 'Quarter-zip pullover in brushed-back fleece. Embroidered chest mark, no bulk under a hi-vis.' },
+  { id: 'range-7', name: 'Crewneck', colour: 'Black', collection: 'Mono', price: 139.95, tag: '',
+    desc: 'Classic heavyweight crew. Ribbed collar that holds its shape wash after wash.' },
+  { id: 'range-8', name: 'Work Shirt', colour: 'Black', collection: 'Workwear', price: 129.95, tag: '',
+    desc: 'Built for the job, not the office. Reinforced seams, chest pocket, embroidered mark on the sleeve.' },
 ];
 
 // Volt Division — the mascot series
 const STREET_VOLT = [
-  { id: 'sv-toolcrew', name: 'Tool Crew Tee', colour: 'Bone', price: 94.95, line: 'Built on Power' },
-  { id: 'sv-lockout', name: 'Lock Out & Live Tee', colour: 'Washed Black', price: 94.95, line: 'Safe Isolation' },
-  { id: 'sv-livecurrent', name: 'Live Current Tee', colour: 'Washed Grey', price: 94.95, line: 'Powering What Matters' },
-  { id: 'sv-volt', name: 'Volt Division Tee', colour: 'White', price: 94.95, line: 'Engineered to Perform' },
-  { id: 'sv-pliers', name: 'Pliers Runner Tee', colour: 'Grey Marle', price: 94.95, line: 'Built Different. Wired to Deliver.' },
+  { id: 'sv-toolcrew', name: 'Tool Crew Tee', colour: 'Bone', price: 94.95, line: 'Built on Power',
+    desc: 'The whole crew on one tee — multimeter, pliers and screwdriver, drawn with attitude. 320gsm heavyweight cotton.' },
+  { id: 'sv-lockout', name: 'Lock Out & Live Tee', colour: 'Washed Black', price: 94.95, line: 'Safe Isolation',
+    desc: 'Lock it out or leave it alone. A nod to safe isolation, printed front and back on garment-washed cotton.' },
+  { id: 'sv-livecurrent', name: 'Live Current Tee', colour: 'Washed Grey', price: 94.95, line: 'Powering What Matters',
+    desc: 'Live current, drawn loud. Oversized fit, heavyweight cotton, built to keep its shape.' },
+  { id: 'sv-volt', name: 'Volt Division Tee', colour: 'White', price: 94.95, line: 'Engineered to Perform',
+    desc: 'The Volt Division mascot in full colour. Clean white ground so the graphic does the talking.' },
+  { id: 'sv-pliers', name: 'Pliers Runner Tee', colour: 'Grey Marle', price: 94.95, line: 'Built Different. Wired to Deliver.',
+    desc: 'Pliers on the run. Grey marle heavyweight cotton with a front hit and back graphic.' },
 ];
 
 // Brand copy straight from the brand sheets

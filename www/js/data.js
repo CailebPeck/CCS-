@@ -308,6 +308,34 @@ const STREET_PRODUCTS = [
     desc: 'Classic heavyweight crew. Ribbed collar that holds its shape wash after wash.' },
   { id: 'range-8', name: 'Work Shirt', colour: 'Black', collection: 'Workwear', price: 129.95, tag: '',
     desc: 'Built for the job, not the office. Reinforced seams, chest pocket, embroidered mark on the sleeve.' },
+
+  // Tidal — 8 pieces sharing a wave-and-bolt back graphic across colourways
+  // and wordmark treatments. Photography not in yet; see STREET_PLACEHOLDER
+  // in app.js — these show a "photo coming soon" tile until it lands.
+  { id: 'td-boxwave-grey', name: 'Boxed Wave Tee', colour: 'Grey Acid Wash', collection: 'Tidal', price: 89.95, tag: 'New',
+    desc: 'Boxed COASTLINE wordmark on the chest, the wave-and-bolt roundel across the back. Acid-washed 320gsm cotton.' },
+  { id: 'td-splitline-white', name: 'Splitline Tee', colour: 'White', collection: 'Tidal', price: 89.95, tag: '',
+    desc: 'COAST/LINE split top to bottom by the bolt, boxed wordmark up front. Clean white ground, oversized fit.' },
+  { id: 'td-boxwave-marle', name: 'Boxed Wave Tee', colour: 'Grey Marle', collection: 'Tidal', price: 89.95, tag: '',
+    desc: 'Same wave-and-bolt back badge in a tonal grey marle colourway. 320gsm heavyweight cotton.' },
+  { id: 'td-gothic-black', name: 'Gothic Compass Tee', colour: 'Black Acid Wash', collection: 'Tidal', price: 94.95, tag: '',
+    desc: 'Arched gothic COASTLINE lettering over a full compass rose with the wave-and-bolt centred. The heaviest graphic in the range.' },
+  { id: 'td-gothic-qz', name: 'Gothic Compass Quarter Zip', colour: 'Black', collection: 'Tidal', price: 149.95, tag: '',
+    desc: 'The gothic compass graphic on a quarter-zip pullover, tonal on the front. Brushed-back fleece.' },
+  { id: 'td-boxwave-tank', name: 'Boxed Wave Tank', colour: 'Black Acid Wash', collection: 'Tidal', price: 79.95, tag: '',
+    desc: 'The boxed wordmark and wave badge on a tank, sleeve hit down the side seam. 320gsm cotton.' },
+  { id: 'td-gothic-hoodie', name: 'Gothic Compass Hoodie', colour: '480gsm Black', collection: 'Tidal', price: 179.95, tag: 'Heavyweight',
+    desc: 'Small chest wordmark, full gothic wave-and-bolt graphic across the back. 480gsm fleece, double-lined hood.' },
+  { id: 'td-beanie', name: 'Coastline Beanie', colour: 'Black', collection: 'Tidal', price: 44.95, tag: '',
+    desc: 'Ribbed beanie with a woven wordmark patch on the cuff — wave-and-bolt patch on the reverse.' },
+
+  // Bolt — new line, distinct from Tidal's wave-and-bolt badge: an angry
+  // lightning bolt front and centre.
+  { id: 'bolt-tee', name: 'Bolt Tee', colour: 'Black', collection: 'Bolt', price: 89.95, tag: 'New',
+    desc: 'An angry lightning bolt front and centre. Boxed COASTLINE / CCS lockup below it, small bolt hit on the sleeve. 320gsm heavyweight cotton.' },
+  { id: 'bolt-hoodie', name: 'Bolt Hoodie', colour: '480gsm Black', collection: 'Bolt', price: 179.95, tag: 'Heavyweight',
+    desc: 'The bolt graphic on the front, a different back print entirely — the crew mascot in a CCS cap throwing a shaka, cable coil in hand. 480gsm fleece.',
+    images: ['bolt-hoodie-front', 'bolt-hoodie-back'] },
 ];
 
 // Volt Division — the mascot series
@@ -322,6 +350,8 @@ const STREET_VOLT = [
     desc: 'The Volt Division mascot in full colour. Clean white ground so the graphic does the talking.' },
   { id: 'sv-pliers', name: 'Pliers Runner Tee', colour: 'Grey Marle', price: 94.95, line: 'Built Different. Wired to Deliver.',
     desc: 'Pliers on the run. Grey marle heavyweight cotton with a front hit and back graphic.' },
+  { id: 'sv-clampmeter', name: 'Clamp Meter Tee', colour: 'Grey Acid Wash', price: 94.95, line: 'Live Current',
+    desc: 'The clamp meter mascot, mid-job with a screwdriver and pliers in hand. Small wave-and-bolt badge, "Powering What Matters" line. 320gsm heavyweight cotton.' },
 ];
 
 // Brand copy straight from the brand sheets

@@ -247,6 +247,9 @@ a { color: var(--red); }
   width: 100%; aspect-ratio: 5 / 6; display: block;
   object-fit: cover; background: #0d0d0f;
 }
+/* The "photo coming soon" placeholder is a fixed-layout SVG tile, not a photo
+   — contain rather than cover so it isn't cropped or stretched off its design. */
+.street-img.ph, .pdp-img.ph, .bag-thumb.ph { object-fit: contain; padding: 8%; box-sizing: border-box; }
 .street-colour { font-size: 11px; color: #8a8a8a; margin-bottom: 4px; }
 .street-tag-chip {
   position: absolute; top: 10px; left: 10px; background: var(--street-red); color: #fff;

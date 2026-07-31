@@ -333,6 +333,9 @@ const COMPANY = {
   tagline: 'Pricing & bookings',
   phone: '02 4304 5913',
   phoneHref: 'tel:0243045913',
+  email: 'caileb@coastlinecurrentsolutions.com.au',
+  // Mobile in international form so the sms: link works from any handset.
+  smsNumber: '+61243045913',
   address: '92 Wells St, East Gosford NSW 2250',
   website: 'https://coastlinecurrentsolutions.com.au',
   serviceArea: 'Central Coast & Newcastle',

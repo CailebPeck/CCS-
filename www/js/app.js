@@ -370,6 +370,36 @@ function sheetBooking() {
   </div>`;
 }
 
+// The app has no server, so a booking cannot deliver itself. These build the
+// booking as plain text and hand it to the phone's own mail or messaging app,
+// which needs no backend, no account and no API key. The customer taps send.
+function bookingText(ref, s) {
+  return [
+    `Booking request ${ref}`,
+    '',
+    `Job: ${s.itemsSummary}`,
+    `When: ${s.date}, ${s.time}`,
+    `Address: ${s.address}`,
+    `Total: ${s.totalLabel}`,
+    s.name ? `Name: ${s.name}` : '',
+    s.phone ? `Phone: ${s.phone}` : '',
+    s.notes ? `Notes: ${s.notes}` : '',
+    '',
+    'Sent from the Coastline Hub app.',
+  ].filter(Boolean).join('\n');
+}
+
+function bookingEmailHref(ref, s) {
+  return 'mailto:' + COMPANY.email
+    + '?subject=' + encodeURIComponent(`Booking request ${ref} — ${s.name || 'new customer'}`)
+    + '&body=' + encodeURIComponent(bookingText(ref, s));
+}
+
+function bookingSmsHref(ref, s) {
+  // "?&body=" is the form both iOS and Android accept; iOS ignores a plain "?".
+  return 'sms:' + COMPANY.smsNumber + '?&body=' + encodeURIComponent(bookingText(ref, s));
+}
+
 function sheetConfirm() {
   const c = UI.confirm || { ref: '', summary: {} };
   const s = c.summary;
@@ -379,17 +409,24 @@ function sheetConfirm() {
       <div style="width:56px;height:56px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;margin-bottom:16px">
         <svg width="26" height="20" viewBox="0 0 26 20"><path d="M2 10L10 18L24 2" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div class="manrope" style="font-weight:800;font-size:20px;margin-bottom:6px">Booking confirmed</div>
+      <div class="manrope" style="font-weight:800;font-size:20px;margin-bottom:6px">Almost done</div>
       <div style="font-size:12.5px;color:var(--muted);margin-bottom:20px">Reference #${esc(c.ref)}</div>
       <div class="card" style="width:100%;box-sizing:border-box;text-align:left;margin-bottom:16px">
         <div style="font-weight:700;font-size:13.5px;margin-bottom:8px">${esc(s.itemsSummary)}</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.7">${esc(s.date)} · ${esc(s.time)}<br>${esc(s.address)}</div>
         <div style="margin-top:10px;font-weight:800;font-size:15px;color:var(--red)">${esc(s.totalLabel)}</div>
       </div>
-      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:24px">We'll text you to confirm final pricing for any custom items within one business day.</div>
+      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:20px">
+        Send this through and we'll confirm your time — and final pricing on any custom items — within one business day.
+      </div>
       <div style="display:flex;flex-direction:column;gap:10px;width:100%">
-        <button class="primary-btn" data-action="confirm-to-bookings">View my bookings</button>
-        <button class="ghost-btn" data-action="confirm-to-home">Done</button>
+        <a class="primary-btn" style="display:block;text-decoration:none;text-align:center;color:#fff"
+           href="${bookingEmailHref(c.ref, s)}" data-action="booking-sent">Send by email</a>
+        <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
+           href="${bookingSmsHref(c.ref, s)}" data-action="booking-sent">Send by text</a>
+        <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
+           href="${esc(COMPANY.phoneHref)}">Call ${esc(COMPANY.phone)}</a>
+        <button class="ghost-btn" style="border:none;color:var(--muted)" data-action="confirm-to-bookings">View my bookings</button>
       </div>
     </div>
   </div>`;
@@ -744,6 +781,12 @@ document.addEventListener('click', (e) => {
   else if (a === 'submit-booking') {
     UI.confirm = Store.submitBooking();
     go({ modal: 'confirm' });
+  }
+  else if (a === 'booking-sent') {
+    // Deferred: these are real <a> elements, and re-rendering synchronously
+    // would tear the anchor out of the DOM mid-click and cancel the handoff
+    // to the mail or messaging app.
+    setTimeout(() => go({ modal: null, custTab: 'bookings' }), 900);
   }
   else if (a === 'confirm-to-bookings') go({ modal: null, custTab: 'bookings' });
   else if (a === 'confirm-to-home') go({ modal: null, custTab: 'home', custCategory: null });

@@ -56,8 +56,9 @@ website and the app are always the same code, so there is nothing to keep in
 sync. On screens 640px and wider `css/app.css` swaps the phone tab bar for a
 left sidebar and widens the grids; below that it renders exactly as the app does.
 
-**One-time setup** (only needed once, already done if the site loads):
-Settings → Pages → Source → **GitHub Actions**.
+No setup is needed — the workflow passes `enablement: true` to
+`actions/configure-pages`, which switches Pages on through the API the first
+time it runs.
 
 Opening the site on a phone offers "Add to Home Screen" (via `manifest.json`),
 which is the only way to get the app onto an iPhone before it is on TestFlight.

@@ -42,6 +42,7 @@ jobs:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KS_KEYPASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           ks="$RUNNER_TEMP/upload-keystore.jks"
           # Strip every whitespace character first. Pasting the secret from a
@@ -54,21 +55,32 @@ jobs:
             exit 1
           fi
 
-          # A truncated paste still decodes to *something*, so prove the result
-          # is a real keystore that opens with the supplied password before
-          # handing it to Gradle — otherwise the failure surfaces much later as
-          # a confusing signing error.
-          if ! keytool -list -keystore "$ks" -storepass "$KS_PASS" -alias "$KS_ALIAS" >/dev/null 2>&1; then
-            echo "::error::The keystore decoded but will not open. Check ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_ALIAS (alias should be 'upload'), and that ANDROID_KEYSTORE_BASE64 was copied in full."
+          # The passwords and alias get the same whitespace treatment — a
+          # trailing newline picked up while copying is invisible in the
+          # secrets UI but makes keytool reject the store outright.
+          pass=$(printf '%s' "$KS_PASS" | tr -d '[:space:]')
+          alias=$(printf '%s' "$KS_ALIAS" | tr -d '[:space:]')
+          keypass=$(printf '%s' "$KS_KEYPASS" | tr -d '[:space:]')
+
+          # Check the store and the alias separately so a failure says which
+          # of the three secrets is actually wrong, rather than listing all of
+          # them and leaving it to guesswork.
+          size=$(wc -c < "$ks")
+          if ! keytool -list -keystore "$ks" -storepass "$pass" >/dev/null 2>&1; then
+            echo "::error::Decoded $size bytes (a valid keystore is ~2800) but it will not open. If the size looks wrong, ANDROID_KEYSTORE_BASE64 was copied incompletely — re-copy the whole of keystore-base64.txt. If the size looks right, ANDROID_KEYSTORE_PASSWORD does not match."
             exit 1
           fi
-          echo "Keystore decoded and verified ($(wc -c < "$ks") bytes, alias '$KS_ALIAS')."
+          if ! keytool -list -keystore "$ks" -storepass "$pass" -alias "$alias" >/dev/null 2>&1; then
+            echo "::error::The keystore opened, so the password is correct, but it holds no alias named '$alias'. Set ANDROID_KEY_ALIAS to one of: $(keytool -list -keystore "$ks" -storepass "$pass" 2>/dev/null | grep -i 'PrivateKeyEntry' | cut -d, -f1 | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "Keystore decoded and verified ($size bytes, alias '$alias')."
 
           {
             echo "ANDROID_KEYSTORE_PATH=$ks"
-            echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
-            echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}"
-            echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}"
+            echo "ANDROID_KEYSTORE_PASSWORD=$pass"
+            echo "ANDROID_KEY_ALIAS=$alias"
+            echo "ANDROID_KEY_PASSWORD=$keypass"
           } >> "$GITHUB_ENV"
 
       - name: Build release bundle (AAB)

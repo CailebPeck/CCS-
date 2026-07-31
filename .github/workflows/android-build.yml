@@ -36,6 +36,10 @@ jobs:
       - name: Sync web assets into Android project
         run: npx cap sync android
 
+      # Never fails the job. Signing only affects the release AAB — the debug
+      # APK behind the public demo link does not need a keystore at all, and a
+      # mistyped secret must not take that download offline. Problems are
+      # reported as warnings and the build carries on unsigned.
       - name: Decode signing keystore
         if: env.HAS_KEYSTORE == 'true'
         env:
@@ -45,53 +49,41 @@ jobs:
           KS_KEYPASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           ks="$RUNNER_TEMP/upload-keystore.jks"
+          fail() { echo "::warning::$1"; exit 0; }
 
-          # Report how long the secret is before anything else. GitHub secrets
-          # are write-only, so there is otherwise no way to tell "I pasted the
-          # wrong thing" apart from "I never saved it" — and a length is not
-          # sensitive. The keystore this repo expects is 3768 characters.
+          # Report the secret's length first. GitHub secrets are write-only, so
+          # there is otherwise no way to tell "I pasted the wrong thing" from
+          # "I never saved it" — and a length is not sensitive.
           raw_len=$(printf '%s' "$KS_B64" | wc -c)
           echo "ANDROID_KEYSTORE_BASE64 is $raw_len characters (expected 3768)."
-          if [ "$raw_len" -lt 3000 ]; then
-            echo "::error::ANDROID_KEYSTORE_BASE64 holds only $raw_len characters — it needs 3768. The secret was not updated, or the copy was cut short. Open keystore-base64.txt, Select All, copy, and replace the secret. On a phone use tap-and-hold then Select All; dragging stops at the screen edge."
-            exit 1
-          fi
-          # Strip every whitespace character first. Pasting the secret from a
-          # phone or a wrapped text viewer often carries newlines or stray
-          # spaces, which made `base64 -d` fail with a bare "invalid input".
+          [ "$raw_len" -ge 3000 ] || fail "Signing skipped: ANDROID_KEYSTORE_BASE64 holds only $raw_len characters, it needs 3768. The secret was not updated, or the copy was cut short. Open keystore-base64.txt, Select All, copy, replace the secret. On a phone use tap-and-hold then Select All — dragging stops at the screen edge."
+
+          # Strip whitespace before decoding: a value pasted from a phone or a
+          # wrapped viewer carries newlines that make base64 -d fail outright.
           printf '%s' "$KS_B64" | tr -d '[:space:]' | base64 -d > "$ks" 2>/dev/null || true
+          [ -s "$ks" ] || fail "Signing skipped: ANDROID_KEYSTORE_BASE64 did not decode to anything."
 
-          if [ ! -s "$ks" ]; then
-            echo "::error::ANDROID_KEYSTORE_BASE64 did not decode to anything. Re-copy the ENTIRE contents of keystore-base64.txt as one line (~3700 characters) and update the secret."
-            exit 1
-          fi
-
-          # The passwords and alias get the same whitespace treatment — a
-          # trailing newline picked up while copying is invisible in the
-          # secrets UI but makes keytool reject the store outright.
+          # Same treatment for the passwords and alias — a trailing newline is
+          # invisible in the secrets UI but makes keytool reject the store.
           pass=$(printf '%s' "$KS_PASS" | tr -d '[:space:]')
           alias=$(printf '%s' "$KS_ALIAS" | tr -d '[:space:]')
           keypass=$(printf '%s' "$KS_KEYPASS" | tr -d '[:space:]')
 
-          # Check the store and the alias separately so a failure says which
-          # of the three secrets is actually wrong, rather than listing all of
-          # them and leaving it to guesswork.
+          # Store and alias are checked separately so the warning names the one
+          # secret that is actually wrong rather than listing all three.
           size=$(wc -c < "$ks")
-          if ! keytool -list -keystore "$ks" -storepass "$pass" >/dev/null 2>&1; then
-            echo "::error::Decoded $size bytes (a valid keystore is ~2800) but it will not open. If the size looks wrong, ANDROID_KEYSTORE_BASE64 was copied incompletely — re-copy the whole of keystore-base64.txt. If the size looks right, ANDROID_KEYSTORE_PASSWORD does not match."
-            exit 1
-          fi
-          if ! keytool -list -keystore "$ks" -storepass "$pass" -alias "$alias" >/dev/null 2>&1; then
-            echo "::error::The keystore opened, so the password is correct, but it holds no alias named '$alias'. Set ANDROID_KEY_ALIAS to one of: $(keytool -list -keystore "$ks" -storepass "$pass" 2>/dev/null | grep -i 'PrivateKeyEntry' | cut -d, -f1 | tr '\n' ' ')"
-            exit 1
-          fi
-          echo "Keystore decoded and verified ($size bytes, alias '$alias')."
+          keytool -list -keystore "$ks" -storepass "$pass" >/dev/null 2>&1 \
+            || fail "Signing skipped: decoded $size bytes (a valid keystore is ~2800) but it will not open. If the size looks wrong, ANDROID_KEYSTORE_BASE64 was copied incompletely. If it looks right, ANDROID_KEYSTORE_PASSWORD does not match."
+          keytool -list -keystore "$ks" -storepass "$pass" -alias "$alias" >/dev/null 2>&1 \
+            || fail "Signing skipped: the keystore opened so the password is correct, but it holds no alias named '$alias'. Set ANDROID_KEY_ALIAS to one of: $(keytool -list -keystore "$ks" -storepass "$pass" 2>/dev/null | grep -i 'PrivateKeyEntry' | cut -d, -f1 | tr '\n' ' ')"
 
+          echo "Keystore decoded and verified ($size bytes, alias '$alias')."
           {
             echo "ANDROID_KEYSTORE_PATH=$ks"
             echo "ANDROID_KEYSTORE_PASSWORD=$pass"
             echo "ANDROID_KEY_ALIAS=$alias"
             echo "ANDROID_KEY_PASSWORD=$keypass"
+            echo "SIGNING_OK=true"
           } >> "$GITHUB_ENV"
 
       - name: Build release bundle (AAB)
@@ -103,9 +95,13 @@ jobs:
         working-directory: android
 
       - name: Note about signing
-        if: env.HAS_KEYSTORE != 'true'
+        if: env.SIGNING_OK != 'true'
         run: |
-          echo "::warning::AAB built UNSIGNED — Google Play will not accept it until signing secrets are configured. See README.md § 'Cloud builds' for the four ANDROID_* secrets to add."
+          if [ "$HAS_KEYSTORE" = "true" ]; then
+            echo "::warning::AAB built UNSIGNED because the signing secrets did not check out — see the warning on the 'Decode signing keystore' step above for which one to fix. The demo APK below is unaffected."
+          else
+            echo "::warning::AAB built UNSIGNED — Google Play will not accept it until signing secrets are configured. See README.md § 'Cloud builds' for the four ANDROID_* secrets to add. The demo APK below is unaffected."
+          fi
 
       - name: Upload release bundle
         uses: actions/upload-artifact@v5

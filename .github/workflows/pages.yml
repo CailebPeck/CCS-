@@ -32,6 +32,13 @@ jobs:
         # comes back "Resource not accessible by integration".
         uses: actions/configure-pages@v5
 
+      # Stamps the commit SHA into index.html's asset query strings so every
+      # deploy busts the browser's disk cache. Runs on the checkout, not the
+      # tracked file, so www/index.html in git keeps the __BUILD__ placeholder
+      # and local dev (npm start) is unaffected.
+      - name: Stamp cache-busting build id
+        run: sed -i "s/__BUILD__/${GITHUB_SHA::8}/g" www/index.html
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:

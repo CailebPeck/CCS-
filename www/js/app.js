@@ -671,11 +671,18 @@ function streetImages(p) {
   return (p.images && p.images.length ? p.images : [p.id]).map((n) => `img/street/${n}.webp`);
 }
 
+const STREET_PLACEHOLDER = 'img/street/coming-soon.svg';
+// Swaps in a "photo coming soon" tile if a product's file isn't on disk yet,
+// so a drop can go live with real names/prices/copy ahead of its photography
+// instead of shipping a broken image icon. Once the real file lands at the
+// same path this has nothing left to do — no code change needed to light it up.
+const streetOnError = `this.onerror=null;this.src='${STREET_PLACEHOLDER}';this.classList.add('ph')`;
+
 function streetCard(p) {
   const kicker = p.collection || p.line || '';
   return `<div class="street-card" data-action="street-open" data-id="${esc(p.id)}" style="cursor:pointer">
     ${p.tag ? `<div class="street-tag-chip">${esc(p.tag)}</div>` : ''}
-    <img class="street-img" src="${esc(streetImages(p)[0])}" alt="${esc(p.name)}" loading="lazy">
+    <img class="street-img" src="${esc(streetImages(p)[0])}" alt="${esc(p.name)}" loading="lazy" onerror="${streetOnError}">
     <div class="street-meta">
       <div style="min-width:0">
         ${kicker ? `<div class="street-coll">${esc(kicker)}</div>` : ''}
@@ -718,7 +725,7 @@ function viewStreetProduct() {
 
     <div class="pdp-gallery" data-gallery>
       <div class="pdp-track">
-        ${imgs.map((src, i) => `<img class="pdp-img" src="${esc(src)}" alt="${esc(p.name)} — view ${i + 1}" ${i ? 'loading="lazy"' : ''}>`).join('')}
+        ${imgs.map((src, i) => `<img class="pdp-img" src="${esc(src)}" alt="${esc(p.name)} — view ${i + 1}" ${i ? 'loading="lazy"' : ''} onerror="${streetOnError}">`).join('')}
       </div>
     </div>
     ${imgs.length > 1 ? `<div class="pdp-dots">${imgs.map((_, i) => `<span class="pdp-dot${i ? '' : ' on'}"></span>`).join('')}</div>` : ''}
@@ -773,7 +780,7 @@ function viewStreetCart() {
       <div style="padding:8px 16px 0">
         ${lines.map((l) => `
           <div class="bag-line">
-            <img src="${esc(streetImages(l.product)[0])}" alt="" class="bag-thumb" loading="lazy">
+            <img src="${esc(streetImages(l.product)[0])}" alt="" class="bag-thumb" loading="lazy" onerror="${streetOnError}">
             <div style="flex:1;min-width:0">
               <div class="street-name" style="margin-bottom:2px">${esc(l.product.name)}</div>
               <div style="font-size:11.5px;color:#8a8a8a;margin-bottom:8px">Size ${esc(l.size)}${l.product.colour ? ' · ' + esc(l.product.colour) : ''}</div>

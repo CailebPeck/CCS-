@@ -346,6 +346,14 @@ const TOOLS_ROADMAP = [
   '4. Field testing', '5. Small production run', '6. Patent review', '7. Mass manufacturing',
 ];
 
+// Cloudflare Worker that forwards submissions into the CRM. Deliberately the
+// Worker's address and not GoHighLevel's own webhook: this file ships inside
+// the APK and is served as plain text on the website, so anything written here
+// is public. The Worker holds the real webhook URL server-side.
+// See integrations/crm-relay-worker.js. Empty = not wired up yet, and every
+// send falls back to email, which is what the app did before.
+const CRM_RELAY_URL = '';
+
 const COMPANY = {
   name: 'Coastline Electrical',
   legalName: 'Coastline Current Solutions',

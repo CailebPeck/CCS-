@@ -26,6 +26,7 @@ const UI = {
   custTab: 'home',         // home | job | bookings | account
   custCategory: null,      // category id, or null
   modal: null,             // 'booking' | 'confirm' | null
+  crmState: 'off',         // off (no relay) | sending | sent | failed
   confirm: null,           // { ref, summary }
   staffTab: 'dashboard',   // dashboard | quote | prices | customers
   expandedCustomer: null,
@@ -409,25 +410,42 @@ function sheetConfirm() {
       <div style="width:56px;height:56px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;margin-bottom:16px">
         <svg width="26" height="20" viewBox="0 0 26 20"><path d="M2 10L10 18L24 2" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div class="manrope" style="font-weight:800;font-size:20px;margin-bottom:6px">Almost done</div>
+      <div class="manrope" style="font-weight:800;font-size:20px;margin-bottom:6px">${UI.crmState === 'sent' ? 'Booking received' : 'Almost done'}</div>
       <div style="font-size:12.5px;color:var(--muted);margin-bottom:20px">Reference #${esc(c.ref)}</div>
       <div class="card" style="width:100%;box-sizing:border-box;text-align:left;margin-bottom:16px">
         <div style="font-weight:700;font-size:13.5px;margin-bottom:8px">${esc(s.itemsSummary)}</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.7">${esc(s.date)} · ${esc(s.time)}<br>${esc(s.address)}</div>
         <div style="margin-top:10px;font-weight:800;font-size:15px;color:var(--red)">${esc(s.totalLabel)}</div>
       </div>
-      <div style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:20px">
-        Send this through and we'll confirm your time — and final pricing on any custom items — within one business day.
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;width:100%">
-        <a class="primary-btn" style="display:block;text-decoration:none;text-align:center;color:#fff"
-           href="${bookingEmailHref(c.ref, s)}" data-action="booking-sent">Send by email</a>
-        <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
-           href="${bookingSmsHref(c.ref, s)}" data-action="booking-sent">Send by text</a>
-        <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
-           href="${esc(COMPANY.phoneHref)}">Call ${esc(COMPANY.phone)}</a>
-        <button class="ghost-btn" style="border:none;color:var(--muted)" data-action="confirm-to-bookings">View my bookings</button>
-      </div>
+      ${UI.crmState === 'sending' ? `
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:20px">Sending your booking through…</div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+          <button class="ghost-btn" style="border:none;color:var(--muted)" data-action="confirm-to-bookings">View my bookings</button>
+        </div>`
+      : UI.crmState === 'sent' ? `
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:20px">
+          We've got it. We'll confirm your time — and final pricing on any custom items — within one business day.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+          <button class="primary-btn" data-action="confirm-to-bookings">View my bookings</button>
+          <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
+             href="${esc(COMPANY.phoneHref)}">Call ${esc(COMPANY.phone)}</a>
+        </div>`
+      : `
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.6;margin-bottom:20px">
+          ${UI.crmState === 'failed'
+            ? "We couldn't send that automatically — please pass it on below so it reaches us."
+            : "Send this through and we'll confirm your time — and final pricing on any custom items — within one business day."}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+          <a class="primary-btn" style="display:block;text-decoration:none;text-align:center;color:#fff"
+             href="${bookingEmailHref(c.ref, s)}" data-action="booking-sent">Send by email</a>
+          <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
+             href="${bookingSmsHref(c.ref, s)}" data-action="booking-sent">Send by text</a>
+          <a class="ghost-btn" style="display:block;text-decoration:none;text-align:center"
+             href="${esc(COMPANY.phoneHref)}">Call ${esc(COMPANY.phone)}</a>
+          <button class="ghost-btn" style="border:none;color:var(--muted)" data-action="confirm-to-bookings">View my bookings</button>
+        </div>`}
     </div>
   </div>`;
 }
@@ -973,8 +991,18 @@ document.addEventListener('click', (e) => {
     render();
   }
   else if (a === 'submit-booking') {
-    UI.confirm = Store.submitBooking();
+    const res = Store.submitBooking();
+    UI.confirm = res;
+    UI.crmState = CRM_RELAY_URL ? 'sending' : 'off';
     go({ modal: 'confirm' });
+    // Fire and forget. The confirmation screen is already up; when this
+    // settles it swaps between "we've got it" and the manual send buttons.
+    if (CRM_RELAY_URL) {
+      Store.sendToCrm('booking', { ref: res.ref, ...res.summary }).then((ok) => {
+        UI.crmState = ok ? 'sent' : 'failed';
+        if (UI.modal === 'confirm') render();
+      });
+    }
   }
   else if (a === 'booking-sent') {
     // Deferred: these are real <a> elements, and re-rendering synchronously

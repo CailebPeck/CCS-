@@ -20,6 +20,9 @@ const catIcon = (catId) => 'img/cat/' + String(catId).replace(/\s+/g, '-') + '.s
 // ── UI (non-persisted) state ────────────────────────────────────────────────
 const UI = {
   route: 'hub',            // hub | electrical | street | tools
+  streetView: 'shop',      // shop | product | cart
+  streetProduct: null,     // product id when streetView === 'product'
+  streetSize: null,        // selected size on the product page
   custTab: 'home',         // home | job | bookings | account
   custCategory: null,      // category id, or null
   modal: null,             // 'booking' | 'confirm' | null
@@ -607,11 +610,17 @@ function staffCustomers() {
 }
 
 // ── Street ──
+// A product's shots. Only one photo exists per garment today, so this falls
+// back to the single file; listing more in `images` is all the carousel needs.
+function streetImages(p) {
+  return (p.images && p.images.length ? p.images : [p.id]).map((n) => `img/street/${n}.webp`);
+}
+
 function streetCard(p) {
   const kicker = p.collection || p.line || '';
-  return `<div class="street-card">
+  return `<div class="street-card" data-action="street-open" data-id="${esc(p.id)}" style="cursor:pointer">
     ${p.tag ? `<div class="street-tag-chip">${esc(p.tag)}</div>` : ''}
-    <img class="street-img" src="img/street/${esc(p.id)}.webp" alt="${esc(p.name)}" loading="lazy">
+    <img class="street-img" src="${esc(streetImages(p)[0])}" alt="${esc(p.name)}" loading="lazy">
     <div class="street-meta">
       <div style="min-width:0">
         ${kicker ? `<div class="street-coll">${esc(kicker)}</div>` : ''}
@@ -619,13 +628,162 @@ function streetCard(p) {
         ${p.colour ? `<div class="street-colour">${esc(p.colour)}</div>` : ''}
         <div class="street-price">A$${p.price.toFixed(2)}</div>
       </div>
-      <button class="street-add" data-action="street-add">+</button>
+      <div class="street-add" aria-hidden="true">›</div>
     </div>
   </div>`;
 }
 
+function streetBag() {
+  const n = Store.streetTotals().count;
+  return `<button class="street-bag" data-action="street-cart" aria-label="View bag (${n} items)">
+    ${ICONS.bag}${n ? `<span class="street-bag-count">${n}</span>` : ''}
+  </button>`;
+}
+
+// ── Street: product detail ──
+function viewStreetProduct() {
+  const all = STREET_PRODUCTS.concat(STREET_VOLT);
+  const p = all.find((x) => x.id === UI.streetProduct);
+  if (!p) return viewStreetShop();
+
+  const imgs = streetImages(p);
+  const size = UI.streetSize || STREET_SIZES[1];
+  const kicker = p.collection || p.line || '';
+  const inBag = Store.state.streetCart[Store.streetKey(p.id, size)] || 0;
+
+  return `
+  <div class="screen" style="background:#050505">
+    <div class="topbar" style="justify-content:space-between;background:#050505;position:sticky;top:0;z-index:5">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="back" data-action="street-back" aria-label="Back to shop">‹</button>
+        <div class="oswald" style="font-weight:700;font-size:15px;letter-spacing:2px">COASTLINE <span style="color:var(--street-red)">STREET</span></div>
+      </div>
+      ${streetBag()}
+    </div>
+
+    <div class="pdp-gallery" data-gallery>
+      <div class="pdp-track">
+        ${imgs.map((src, i) => `<img class="pdp-img" src="${esc(src)}" alt="${esc(p.name)} — view ${i + 1}" ${i ? 'loading="lazy"' : ''}>`).join('')}
+      </div>
+    </div>
+    ${imgs.length > 1 ? `<div class="pdp-dots">${imgs.map((_, i) => `<span class="pdp-dot${i ? '' : ' on'}"></span>`).join('')}</div>` : ''}
+
+    <div style="padding:22px 20px calc(120px + var(--sab))">
+      ${kicker ? `<div class="street-coll">${esc(kicker)}</div>` : ''}
+      <h1 class="oswald" style="font-size:28px;font-weight:700;margin:4px 0 6px;line-height:1.1">${esc(p.name)}</h1>
+      ${p.colour ? `<div style="font-size:12.5px;color:#8a8a8a;margin-bottom:10px">${esc(p.colour)}</div>` : ''}
+      <div style="font-size:20px;color:#f5f5f2;font-weight:700;margin-bottom:18px">A$${p.price.toFixed(2)}</div>
+      ${p.desc ? `<p style="font-size:13.5px;color:#a9a9a9;line-height:1.75;margin:0 0 24px">${esc(p.desc)}</p>` : ''}
+
+      <div style="font-size:11px;letter-spacing:2px;color:#8a8a8a;text-transform:uppercase;margin-bottom:10px">Size</div>
+      <div class="size-row">
+        ${STREET_SIZES.map((s) => `<button class="size-btn${s === size ? ' on' : ''}" data-action="street-size" data-size="${esc(s)}">${esc(s)}</button>`).join('')}
+      </div>
+      ${inBag ? `<div style="font-size:12px;color:#7ed6a0;margin-top:14px">${inBag} × size ${esc(size)} already in your bag</div>` : ''}
+
+      <div style="margin-top:28px;padding-top:22px;border-top:1px solid #1a1a1a;font-size:12px;color:#6f6f6f;line-height:1.8">
+        Free AU shipping over A$150<br>Limited runs — once it's gone, it's gone
+      </div>
+    </div>
+
+    <div class="pdp-bar">
+      <button class="primary-btn" style="background:var(--street-red)" data-action="street-add" data-id="${esc(p.id)}" data-size="${esc(size)}">
+        Add to bag — A$${p.price.toFixed(2)}
+      </button>
+    </div>
+  </div>`;
+}
+
+// ── Street: bag ──
+function viewStreetCart() {
+  const { lines, count, subtotal } = Store.streetTotals();
+  const freeShip = subtotal >= 150;
+
+  return `
+  <div class="screen" style="background:#050505">
+    <div class="topbar" style="justify-content:space-between;background:#050505;position:sticky;top:0;z-index:5">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="back" data-action="street-back" aria-label="Back">‹</button>
+        <div class="oswald" style="font-weight:700;font-size:17px;letter-spacing:2px">YOUR BAG</div>
+      </div>
+    </div>
+
+    ${!lines.length ? `
+      <div style="padding:80px 30px;text-align:center">
+        <div style="font-size:40px;margin-bottom:14px;opacity:.35">⛃</div>
+        <div class="oswald" style="font-size:20px;margin-bottom:8px">Your bag is empty</div>
+        <div style="color:#8a8a8a;font-size:13px;line-height:1.6;margin-bottom:26px">Collection 001 is live now.</div>
+        <button class="primary-btn" style="background:var(--street-red);max-width:220px;margin:0 auto" data-action="street-back">Shop the drop</button>
+      </div>` : `
+      <div style="padding:8px 16px 0">
+        ${lines.map((l) => `
+          <div class="bag-line">
+            <img src="${esc(streetImages(l.product)[0])}" alt="" class="bag-thumb" loading="lazy">
+            <div style="flex:1;min-width:0">
+              <div class="street-name" style="margin-bottom:2px">${esc(l.product.name)}</div>
+              <div style="font-size:11.5px;color:#8a8a8a;margin-bottom:8px">Size ${esc(l.size)}${l.product.colour ? ' · ' + esc(l.product.colour) : ''}</div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <div class="qty-ctl" style="background:#101011">
+                  <button class="dec" data-action="street-qty" data-id="${esc(l.product.id)}" data-size="${esc(l.size)}" data-d="-1" aria-label="Decrease">–</button>
+                  <div class="q">${l.qty}</div>
+                  <button class="inc" style="background:var(--street-red)" data-action="street-qty" data-id="${esc(l.product.id)}" data-size="${esc(l.size)}" data-d="1" aria-label="Increase">+</button>
+                </div>
+                <button class="link-btn" data-action="street-remove" data-key="${esc(l.key)}">Remove</button>
+              </div>
+            </div>
+            <div style="font-weight:700;font-size:14px;white-space:nowrap">A$${l.line.toFixed(2)}</div>
+          </div>`).join('')}
+      </div>
+
+      <div style="padding:22px 20px calc(30px + var(--sab))">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:#8a8a8a;margin-bottom:8px">
+          <span>Subtotal (${count} item${count === 1 ? '' : 's'})</span><span>A$${subtotal.toFixed(2)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:${freeShip ? '#7ed6a0' : '#8a8a8a'};margin-bottom:14px">
+          <span>Shipping</span><span>${freeShip ? 'Free' : 'Calculated at checkout'}</span>
+        </div>
+        ${!freeShip ? `<div style="font-size:11.5px;color:#6f6f6f;margin-bottom:14px">A$${(150 - subtotal).toFixed(2)} away from free AU shipping</div>` : ''}
+        <div style="display:flex;justify-content:space-between;font-size:17px;font-weight:800;padding-top:14px;border-top:1px solid #1a1a1a;margin-bottom:20px">
+          <span>Total</span><span>A$${subtotal.toFixed(2)}</span>
+        </div>
+        <a class="primary-btn" style="background:var(--street-red);display:block;text-align:center;text-decoration:none;color:#fff"
+           href="${streetOrderHref()}" data-action="street-ordered">Send order enquiry</a>
+        <div style="font-size:11.5px;color:#6f6f6f;line-height:1.6;margin-top:12px;text-align:center">
+          Opens your email with the order ready to send. We'll reply to confirm stock and payment.
+        </div>
+      </div>`}
+  </div>`;
+}
+
+// Same approach as bookings: no server, so the order is handed to the phone's
+// mail app pre-filled rather than silently going nowhere.
+function streetOrderHref() {
+  const { lines, count, subtotal } = Store.streetTotals();
+  const body = [
+    'Order enquiry — Coastline Street',
+    '',
+    ...lines.map((l) => `${l.qty}x ${l.product.name} — size ${l.size} — A$${l.line.toFixed(2)}`),
+    '',
+    `Total: A$${subtotal.toFixed(2)} (${count} item${count === 1 ? '' : 's'})`,
+    '',
+    'Name:',
+    'Delivery address:',
+    'Phone:',
+    '',
+    'Sent from the Coastline Hub app.',
+  ].join('\n');
+  return 'mailto:' + COMPANY.email
+    + '?subject=' + encodeURIComponent('Coastline Street order enquiry')
+    + '&body=' + encodeURIComponent(body);
+}
+
 function viewStreet() {
-  const cart = Store.state.streetCart;
+  if (UI.streetView === 'product') return viewStreetProduct();
+  if (UI.streetView === 'cart') return viewStreetCart();
+  return viewStreetShop();
+}
+
+function viewStreetShop() {
   return `
   <div class="screen" style="background:#050505">
     <div class="street-banner">Collection 001 — Bloodline — Now Live · Free AU shipping over A$150</div>
@@ -634,7 +792,7 @@ function viewStreet() {
         <button class="back" data-action="nav" data-route="hub">‹</button>
         <div class="oswald" style="font-weight:700;font-size:17px;letter-spacing:2px">COASTLINE <span style="color:var(--street-red)">STREET</span></div>
       </div>
-      <div style="position:relative;font-size:16px;color:#c9c9c9">⛃${cart > 0 ? `<span style="position:absolute;top:-8px;right:-12px;background:var(--street-red);color:#fff;font-size:10px;font-weight:600;border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center">${cart}</span>` : ''}</div>
+      ${streetBag()}
     </div>
     <div class="street-hero">
       <div class="inner">
@@ -804,10 +962,32 @@ document.addEventListener('click', (e) => {
     localStorage.removeItem(STORAGE_KEY);
     location.reload();
   }
-  else if (a === 'street-add') {
-    Store.set({ streetCart: Store.state.streetCart + 1 });
+  else if (a === 'street-open') {
+    go({ streetView: 'product', streetProduct: el.dataset.id, streetSize: null });
+  }
+  else if (a === 'street-size') go({ streetSize: el.dataset.size });
+  else if (a === 'street-cart') go({ streetView: 'cart' });
+  else if (a === 'street-back') {
+    // From the bag, step back to whatever was being looked at before.
+    go(UI.streetView === 'cart' && UI.streetProduct
+      ? { streetView: 'product' }
+      : { streetView: 'shop', streetProduct: null });
+  }
+  else if (a === 'street-qty') {
+    Store.streetAdd(el.dataset.id, el.dataset.size, Number(el.dataset.d));
     render();
-    toast('Added to cart — online store coming soon');
+  }
+  else if (a === 'street-remove') { Store.streetRemove(el.dataset.key); render(); }
+  else if (a === 'street-ordered') {
+    // Deferred for the same reason as bookings: re-rendering synchronously
+    // would remove the anchor mid-click and cancel the handoff to the mail app.
+    setTimeout(() => go({ streetView: 'shop', streetProduct: null }), 900);
+  }
+  else if (a === 'street-add') {
+    const size = el.dataset.size || STREET_SIZES[1];
+    Store.streetAdd(el.dataset.id, size, 1);
+    render();
+    toast(`Added — size ${size}`);
   }
   else if (a === 'street-shop') {
     const t = document.getElementById('street-drop');

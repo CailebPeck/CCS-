@@ -22,8 +22,9 @@ const Store = {
     quoteSite: '',
     calloutFee: false,
     priceOverrides: {},     // itemId -> number
-    // street demo cart
-    streetCart: 0,
+    // Coastline Street cart: "productId|size" -> qty. Size is part of the key
+    // so the same garment in M and L are separate lines.
+    streetCart: {},
   },
 
   load() {
@@ -35,6 +36,12 @@ const Store = {
         this.state.form = Object.assign({ address: '', date: '', name: '', phone: '', timeSlot: null }, saved.form);
         if (!Array.isArray(this.state.bookings) || !this.state.bookings.length) {
           this.state.bookings = DEFAULT_BOOKINGS.slice();
+        }
+        // streetCart used to be a plain count. Anyone carrying that older
+        // saved state would otherwise land here with a number where the code
+        // now expects a map, so drop it rather than crash on load.
+        if (typeof this.state.streetCart !== 'object' || this.state.streetCart === null) {
+          this.state.streetCart = {};
         }
       }
     } catch (e) { /* corrupt state — start fresh */ }
@@ -84,6 +91,43 @@ const Store = {
     const { lines } = this.cartTotals(cartObj);
     if (!lines.length) return 'Custom job request';
     return lines.map(l => (l.qty > 1 ? l.qty + 'x ' : '') + l.it.name).join(', ');
+  },
+
+  // ── Coastline Street cart ──
+  streetKey(id, size) { return id + '|' + size; },
+
+  streetAdd(id, size, d) {
+    const key = this.streetKey(id, size);
+    const next = Object.assign({}, this.state.streetCart);
+    const qty = (next[key] || 0) + d;
+    if (qty > 0) next[key] = qty; else delete next[key];
+    this.set({ streetCart: next });
+  },
+
+  streetRemove(key) {
+    const next = Object.assign({}, this.state.streetCart);
+    delete next[key];
+    this.set({ streetCart: next });
+  },
+
+  // Resolves cart keys back to products, skipping any whose id no longer
+  // exists so a renamed product cannot break the cart for someone mid-shop.
+  streetLines() {
+    const all = STREET_PRODUCTS.concat(STREET_VOLT);
+    return Object.entries(this.state.streetCart).map(([key, qty]) => {
+      const [id, size] = key.split('|');
+      const p = all.find((x) => x.id === id);
+      return p ? { key, product: p, size, qty, line: p.price * qty } : null;
+    }).filter(Boolean);
+  },
+
+  streetTotals() {
+    const lines = this.streetLines();
+    return {
+      lines,
+      count: lines.reduce((n, l) => n + l.qty, 0),
+      subtotal: lines.reduce((n, l) => n + l.line, 0),
+    };
   },
 
   submitBooking() {

@@ -20,6 +20,12 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!-- The app uses no encryption beyond the HTTPS that iOS itself provides,
+	     which is exempt. Declaring it here stops App Store Connect holding
+	     every single build for a manual compliance answer before testers can
+	     install it. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

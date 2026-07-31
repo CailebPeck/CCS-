@@ -93,6 +93,27 @@ const Store = {
     return lines.map(l => (l.qty > 1 ? l.qty + 'x ' : '') + l.it.name).join(', ');
   },
 
+  // Posts a submission to the CRM relay. Resolves true only on a confirmed
+  // 2xx — not-configured, offline, relay down and CRM-rejected all resolve
+  // false, so the caller falls back to email rather than a booking quietly
+  // evaporating. Never rejects, and never blocks the UI: the confirmation
+  // screen renders immediately and this settles behind it.
+  sendToCrm(type, data) {
+    if (typeof CRM_RELAY_URL !== 'string' || !CRM_RELAY_URL) return Promise.resolve(false);
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 8000);
+    return fetch(CRM_RELAY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // _hp is the relay's honeypot and must always go out empty.
+      body: JSON.stringify(Object.assign({ type: type, _hp: '' }, data)),
+      signal: ctl.signal,
+    })
+      .then((r) => r.ok)
+      .catch(() => false)
+      .then((ok) => { clearTimeout(timer); return ok; });
+  },
+
   // ── Coastline Street cart ──
   streetKey(id, size) { return id + '|' + size; },
 

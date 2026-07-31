@@ -142,14 +142,11 @@ write('brand/roundel-line.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox
 ${DIAL_CLIP}${waveBolt()}
 </svg>`);
 
-// Boxed wordmark lockup
-const wordmark = (fg, accent, border) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 132" width="420" height="132" role="img" aria-label="Coastline Current Solutions">
-<rect x="4" y="4" width="412" height="124" fill="none" stroke="${border}" stroke-width="7"/>
-<text x="210" y="72" text-anchor="middle" font-family="Oswald,'Arial Narrow',Impact,sans-serif" font-weight="700" font-size="62" letter-spacing="2" fill="${fg}">COASTLINE</text>
-<text x="210" y="105" text-anchor="middle" font-family="Oswald,'Arial Narrow',Impact,sans-serif" font-weight="600" font-size="23" letter-spacing="7" fill="${accent}">CURRENT SOLUTIONS</text>
-</svg>`;
-write('brand/wordmark.svg', wordmark('#f5f5f2', BRAND_RED, BRAND_RED));
-write('brand/wordmark-red.svg', wordmark(BRAND_RED, '#f5f5f2', BRAND_RED));
+// The wordmark lockup is built by tools/generate-wordmark.py instead, which
+// converts the Brothers lettering to outlines using the real font file. It has
+// to be done that way: an SVG loaded through an <img> tag — which is how the
+// app uses these marks — cannot reach a webfont, so <text> here would silently
+// fall back to whatever the device happens to have.
 
 // Sleeve bolt icon
 write('brand/bolt.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96" width="64" height="96" role="img" aria-label="bolt">

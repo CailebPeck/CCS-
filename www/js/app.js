@@ -29,9 +29,6 @@ const UI = {
   confirm: null,           // { ref, summary }
   staffTab: 'dashboard',   // dashboard | quote | prices | customers
   expandedCustomer: null,
-  quoteSent: false,
-  xeroSynced: false,
-  crmSynced: false,
   scrollPos: {},
 };
 
@@ -531,10 +528,48 @@ function staffQuote() {
   <div style="padding:8px 20px 190px;display:flex;flex-direction:column;gap:16px">${cats}</div>`;
 }
 
+// An itemised quote as plain text, handed to the phone's mail or messaging
+// app. Same reasoning as bookings and orders: there is no server, so the
+// alternative is a button that claims to have sent something and has not.
+function quoteText() {
+  const s = Store.state;
+  const t = Store.cartTotals(s.quoteCart);
+  const total = t.subtotal + (s.calloutFee ? 60 : 0);
+  return [
+    `Quote — ${COMPANY.legalName}`,
+    s.quoteCustomer ? `Customer: ${s.quoteCustomer}` : '',
+    s.quoteSite ? `Site: ${s.quoteSite}` : '',
+    '',
+    ...t.lines.map(({ it, qty }) => {
+      const p = Store.priceOf(it);
+      return p == null
+        ? `${qty > 1 ? qty + 'x ' : ''}${it.name} — quote required`
+        : `${qty > 1 ? qty + 'x ' : ''}${it.name} — ${money(p * qty)}`;
+    }),
+    s.calloutFee ? `Call-out fee — ${money(60)}` : '',
+    '',
+    `Total (inc. GST): ${money(total)}${t.hasCustom ? ' + items to be quoted' : ''}`,
+    '',
+    `${COMPANY.phone} · ${COMPANY.website}`,
+  ].filter(Boolean).join('\n');
+}
+
+function quoteEmailHref() {
+  const s = Store.state;
+  return 'mailto:?subject='
+    + encodeURIComponent(`Quote from ${COMPANY.legalName}${s.quoteCustomer ? ' — ' + s.quoteCustomer : ''}`)
+    + '&body=' + encodeURIComponent(quoteText());
+}
+
+function quoteSmsHref() {
+  return 'sms:?&body=' + encodeURIComponent(quoteText());
+}
+
 function staffQuoteFooter() {
   const s = Store.state;
   const totals = Store.cartTotals(s.quoteCart);
   const total = totals.subtotal + (s.calloutFee ? 60 : 0);
+  const empty = !totals.lines.length;
   return `
   <div style="background:#131313;border-top:1px solid var(--line);padding:10px 20px 12px;flex-shrink:0">
     <div style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px"><span>Subtotal (inc. GST)</span><span>${money(totals.subtotal)}</span></div>
@@ -544,12 +579,14 @@ function staffQuoteFooter() {
     </button>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <div class="manrope" style="font-weight:800;font-size:16px;color:var(--red)">${money(total)}${totals.hasCustom ? ' + quote' : ''}</div>
-      <button data-action="send-quote" style="border:none;background:var(--red);color:#fff;border-radius:12px;padding:11px 18px;font-weight:800;font-size:12.5px;cursor:pointer;font-family:'Manrope',sans-serif">${UI.quoteSent ? 'Sent ✓' : 'Send to customer'}</button>
     </div>
     <div style="display:flex;gap:6px">
-      <button data-action="push-xero" style="flex:1;border:1px solid rgba(255,255,255,0.1);background:${UI.xeroSynced ? 'rgba(90,180,120,0.15)' : 'transparent'};color:${UI.xeroSynced ? '#7ed6a0' : 'rgba(255,255,255,0.6)'};border-radius:9px;padding:8px 6px;font-size:11px;font-weight:700;cursor:pointer">${UI.xeroSynced ? '✓ Synced to Xero' : 'Push to Xero'}</button>
-      <button data-action="push-crm" style="flex:1;border:1px solid rgba(255,255,255,0.1);background:${UI.crmSynced ? 'rgba(90,180,120,0.15)' : 'transparent'};color:${UI.crmSynced ? '#7ed6a0' : 'rgba(255,255,255,0.6)'};border-radius:9px;padding:8px 6px;font-size:11px;font-weight:700;cursor:pointer">${UI.crmSynced ? '✓ Synced to CRM' : 'Push to CRM'}</button>
+      <a class="quote-send${empty ? ' off' : ''}" ${empty ? '' : `href="${quoteEmailHref()}"`}>Email quote</a>
+      <a class="quote-send${empty ? ' off' : ''}" ${empty ? '' : `href="${quoteSmsHref()}"`}>Text quote</a>
     </div>
+    <!-- Xero and the CRM are not connected yet. These stay visible so the
+         workflow is clear, but they must not look like they did something. -->
+    <div class="sync-pending">Xero &amp; CRM sync — not connected yet</div>
   </div>`;
 }
 
@@ -921,7 +958,6 @@ document.addEventListener('click', (e) => {
   }
   else if (a === 'qty') {
     Store.setQty(el.dataset.cart, el.dataset.id, Number(el.dataset.d));
-    UI.quoteSent = UI.xeroSynced = UI.crmSynced = false;
     render();
   }
   else if (a === 'remove-line') {
@@ -954,9 +990,6 @@ document.addEventListener('click', (e) => {
   }
   else if (a === 'staff-tab') go({ staffTab: el.dataset.tab });
   else if (a === 'toggle-callout') { Store.set({ calloutFee: !Store.state.calloutFee }); render(); }
-  else if (a === 'send-quote') { UI.quoteSent = true; render(); toast('Quote sent to customer'); }
-  else if (a === 'push-xero') { UI.xeroSynced = true; render(); toast('Pushed to Xero'); }
-  else if (a === 'push-crm') { UI.crmSynced = true; render(); toast('Pushed to CRM'); }
   else if (a === 'toggle-customer') go({ expandedCustomer: UI.expandedCustomer === el.dataset.id ? null : el.dataset.id });
   else if (a === 'reset-data') {
     localStorage.removeItem(STORAGE_KEY);

@@ -38,10 +38,34 @@ jobs:
 
       - name: Decode signing keystore
         if: env.HAS_KEYSTORE == 'true'
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
+          ks="$RUNNER_TEMP/upload-keystore.jks"
+          # Strip every whitespace character first. Pasting the secret from a
+          # phone or a wrapped text viewer often carries newlines or stray
+          # spaces, which made `base64 -d` fail with a bare "invalid input".
+          printf '%s' "$KS_B64" | tr -d '[:space:]' | base64 -d > "$ks" 2>/dev/null || true
+
+          if [ ! -s "$ks" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 did not decode to anything. Re-copy the ENTIRE contents of keystore-base64.txt as one line (~3700 characters) and update the secret."
+            exit 1
+          fi
+
+          # A truncated paste still decodes to *something*, so prove the result
+          # is a real keystore that opens with the supplied password before
+          # handing it to Gradle — otherwise the failure surfaces much later as
+          # a confusing signing error.
+          if ! keytool -list -keystore "$ks" -storepass "$KS_PASS" -alias "$KS_ALIAS" >/dev/null 2>&1; then
+            echo "::error::The keystore decoded but will not open. Check ANDROID_KEYSTORE_PASSWORD and ANDROID_KEY_ALIAS (alias should be 'upload'), and that ANDROID_KEYSTORE_BASE64 was copied in full."
+            exit 1
+          fi
+          echo "Keystore decoded and verified ($(wc -c < "$ks") bytes, alias '$KS_ALIAS')."
+
           {
-            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload-keystore.jks"
+            echo "ANDROID_KEYSTORE_PATH=$ks"
             echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
             echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}"
             echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}"

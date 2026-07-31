@@ -45,6 +45,17 @@ jobs:
           KS_KEYPASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           ks="$RUNNER_TEMP/upload-keystore.jks"
+
+          # Report how long the secret is before anything else. GitHub secrets
+          # are write-only, so there is otherwise no way to tell "I pasted the
+          # wrong thing" apart from "I never saved it" — and a length is not
+          # sensitive. The keystore this repo expects is 3768 characters.
+          raw_len=$(printf '%s' "$KS_B64" | wc -c)
+          echo "ANDROID_KEYSTORE_BASE64 is $raw_len characters (expected 3768)."
+          if [ "$raw_len" -lt 3000 ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 holds only $raw_len characters — it needs 3768. The secret was not updated, or the copy was cut short. Open keystore-base64.txt, Select All, copy, and replace the secret. On a phone use tap-and-hold then Select All; dragging stops at the screen edge."
+            exit 1
+          fi
           # Strip every whitespace character first. Pasting the secret from a
           # phone or a wrapped text viewer often carries newlines or stray
           # spaces, which made `base64 -d` fail with a bare "invalid input".

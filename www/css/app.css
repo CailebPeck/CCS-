@@ -253,3 +253,148 @@ a { color: var(--red); }
   font-weight: 700; cursor: pointer; background: transparent; color: var(--muted);
 }
 .seg button.on { background: var(--red); color: #fff; }
+
+/* ── Desktop / tablet responsive layout ─────────────────────────────────── */
+@media (min-width: 640px) {
+  html, body {
+    position: static;
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+    overscroll-behavior-y: auto;
+  }
+
+  body {
+    background: #050505;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  #app {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: 980px;
+    min-height: 100vh;
+    flex-direction: row;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+  }
+
+  /* main content scrolls naturally */
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 100vh;
+    padding-top: 0;
+  }
+
+  /* ─ Tab bar becomes a left sidebar ─ */
+  .tabbar {
+    order: -1;
+    flex-direction: column;
+    width: 190px;
+    flex-shrink: 0;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    border-top: none;
+    border-right: 1px solid var(--line);
+    padding: 72px 10px 20px;
+    gap: 4px;
+    overflow-y: auto;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
+  /* logo badge above sidebar items */
+  .tabbar::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: url('../img/brand/roundel.svg') center / contain no-repeat;
+  }
+
+  .tabbar button {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    width: 100%;
+  }
+
+  .tabbar button.active {
+    background: rgba(198, 42, 46, 0.12);
+  }
+
+  .tabbar .tab-label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+  }
+
+  .tabbar .badge {
+    position: static;
+    margin-left: auto;
+  }
+
+  /* ─ Hub landing: wider, centred ─ */
+  .hub {
+    max-width: 620px;
+    margin: 0 auto;
+    padding-top: 48px;
+  }
+
+  .hub-cards {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .hub-card {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  /* ─ Category / street grids: 3 cols ─ */
+  .cat-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .street-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  /* ─ Topbar: sticky + separator ─ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    z-index: 10;
+  }
+
+  /* sheets stay inset to the app container */
+  .sheet {
+    position: absolute;
+  }
+
+  .toast {
+    bottom: 30px;
+    left: 40px;
+    right: 40px;
+  }
+}
+
+@media (min-width: 900px) {
+  #app { max-width: 1120px; }
+  .tabbar { width: 220px; }
+  .cat-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}

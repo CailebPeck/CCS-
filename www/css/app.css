@@ -1,12 +1,20 @@
 /* Coastline Hub — app styles */
 
-/* Brothers — the face used in the Coastline logo lockups. Self-hosted so it
-   renders identically in the app, the website and offline. swap keeps text
-   visible while it loads rather than flashing invisible. */
+/* Anton (SIL Open Font License) sets the headings — a heavy condensed display
+   face chosen to sit alongside the logo's Brothers lettering.
+
+   Brothers itself is deliberately NOT used here. It is a commercial Emigre
+   typeface, and the licence that covers it for the logo and merchandise does
+   not extend to self-hosting a webfont or embedding one in an app binary. The
+   branding loses nothing: the lettering inside the logo artwork is already
+   outlined vector, so the mark customers actually recognise is unaffected.
+   Anton is OFL — free for commercial use, self-hosting and app embedding —
+   so it is bundled and works offline.
+
+   swap keeps text visible while it loads rather than flashing invisible. */
 @font-face {
-  font-family: 'Brothers';
-  src: url('../fonts/brothers.woff2') format('woff2'),
-       url('../fonts/brothers.woff') format('woff');
+  font-family: 'Anton';
+  src: url('../fonts/anton.woff2') format('woff2');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -54,7 +62,7 @@ button { font-family: inherit; }
 input, textarea { font-family: inherit; }
 a { color: var(--red); }
 
-.oswald { font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; }
+.oswald { font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; }
 .manrope { font-family: 'Manrope', sans-serif; }
 
 /* ── Top bar ── */
@@ -73,7 +81,7 @@ a { color: var(--red); }
 .hub { display: flex; flex-direction: column; min-height: 100%; box-sizing: border-box; padding: 24px 20px calc(28px + var(--sab)); }
 .hub-brand { text-align: center; margin: 26px 0 8px; }
 .hub-kicker { font-size: 11px; letter-spacing: 4px; color: var(--street-red); text-transform: uppercase; margin-bottom: 12px; }
-.hub-title { font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; font-weight: 700; font-size: clamp(24px, 8vw, 34px); letter-spacing: 1px; margin: 0 0 10px; }
+.hub-title { font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; font-weight: 700; font-size: clamp(24px, 8vw, 34px); letter-spacing: 1px; margin: 0 0 10px; }
 .hub-sub { color: #a9a9a9; font-size: 14px; line-height: 1.6; margin: 0 auto 30px; max-width: 300px; }
 .hub-cards { display: flex; flex-direction: column; gap: 14px; }
 .hub-card {
@@ -86,7 +94,7 @@ a { color: var(--red); }
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; font-size: 20px;
 }
-.hub-card .name { font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 0.5px; }
+.hub-card .name { font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 0.5px; }
 .hub-card .desc { font-size: 13px; color: #8a8a8a; line-height: 1.5; }
 .hub-card .cta { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
 .hub-foot { text-align: center; font-size: 11px; color: #555; margin-top: 30px; line-height: 1.7; }
@@ -186,7 +194,7 @@ a { color: var(--red); }
 /* ── Street ── */
 .street-banner {
   background: var(--street-red); color: #fff; text-align: center; padding: 8px 12px;
-  font-size: 11px; letter-spacing: 2px; font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; text-transform: uppercase;
+  font-size: 11px; letter-spacing: 2px; font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; text-transform: uppercase;
 }
 .street-hero {
   position: relative; min-height: 420px; display: flex; align-items: flex-end;
@@ -202,13 +210,13 @@ a { color: var(--red); }
 .street-kicker { font-size: 11px; letter-spacing: 4px; color: #f21d2a; text-transform: uppercase; margin-bottom: 10px; }
 /* Fluid: Brothers is far wider than the Oswald this replaced, so a fixed 58px
    overflowed BLOODLINE past the right edge on a 360px phone. */
-.street-h1 { font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; font-size: clamp(40px, 12vw, 58px); font-weight: 700; line-height: 0.95; margin: 0 0 12px; letter-spacing: 1px; }
+.street-h1 { font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; font-size: clamp(40px, 12vw, 58px); font-weight: 700; line-height: 0.95; margin: 0 0 12px; letter-spacing: 1px; }
 .street-tag { font-size: 13px; letter-spacing: 1px; color: #d8cdba; margin-bottom: 22px; }
 
 .marquee { overflow: hidden; border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a; background: #080808; padding: 12px 0; white-space: nowrap; }
 .marquee .track {
   display: inline-flex; gap: 40px; animation: cs-marquee 28s linear infinite;
-  font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; font-size: 12px; letter-spacing: 3px;
+  font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; font-size: 12px; letter-spacing: 3px;
   text-transform: uppercase; color: #8a8a8a;
 }
 @keyframes cs-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -222,12 +230,12 @@ a { color: var(--red); }
 .street-colour { font-size: 11px; color: #8a8a8a; margin-bottom: 4px; }
 .street-tag-chip {
   position: absolute; top: 10px; left: 10px; background: var(--street-red); color: #fff;
-  font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; font-size: 9px; letter-spacing: 1.5px;
+  font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; font-size: 9px; letter-spacing: 1.5px;
   text-transform: uppercase; padding: 4px 8px; z-index: 2;
 }
 .street-meta { padding: 12px 12px 14px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .street-coll { font-size: 10px; letter-spacing: 1.5px; color: #f21d2a; text-transform: uppercase; margin-bottom: 4px; }
-.street-name { font-family: 'Brothers', 'Oswald', 'Manrope', sans-serif; font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+.street-name { font-family: 'Anton', 'Oswald', 'Manrope', sans-serif; font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
 .street-price { font-size: 13px; color: #d8cdba; }
 .street-add {
   background: transparent; border: 1px solid #333; color: #c9c9c9; font-size: 16px;
